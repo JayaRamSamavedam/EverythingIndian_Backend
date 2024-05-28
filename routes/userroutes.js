@@ -23,7 +23,6 @@ router.post("/user/changepassword",controllers.changePassword);
 //forgot password
 router.post("/user/forgotpassword",controllers.forgotPassword);
 
-
 // otpsend
 router.post("/user/otp",controllers.userOtpSend);
 
@@ -34,6 +33,6 @@ router.post("/user/verifyotp",controllers.verifyOtp);
 router.post("/user/resetpassword",controllers.resetPassword);
 
 //change the phone number
-router.post("/user/changephonenumber", verifyAccessToken, controllers.changePhoneNumber);
+router.post("/user/changephonenumber", controllers.changePhoneNumber);
 
 module.exports =router;
