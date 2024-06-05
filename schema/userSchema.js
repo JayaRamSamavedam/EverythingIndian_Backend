@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const UserGroup = require("./usergroupsSchema");
 
-const SECRECT_KEY = process.env.JWT_SECRET; // Ensure your environment variable is correctly named
-const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET; // For refresh tokens
+const SECRECT_KEY = process.env.JWT_SECRET;
+const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET; 
 
 const userSchema = new mongoose.Schema({
   uname: {
@@ -38,6 +39,10 @@ const userSchema = new mongoose.Schema({
       message: "Not a valid mobile number"
     }
   },
+  userGroup:{
+    type:String,
+    required:true,
+  },
   tokens: [
     {
       token: {
@@ -50,6 +55,10 @@ const userSchema = new mongoose.Schema({
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {
+  const userGroup = await UserGroup.findOne({name:this.userGroup});
+  if(!userGroup){
+    throw new Error('Invalid or non-existent UserGroup');
+  }
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 12);
   }
@@ -69,7 +78,6 @@ userSchema.methods.generateAuthToken = async function() {
     throw new Error(error);
   }
 };
-
 
 
 const Users = mongoose.model("Users", userSchema);

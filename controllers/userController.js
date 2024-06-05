@@ -16,6 +16,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+
 exports.userRegister = async (req, res) => {
   const { uname, email, phonenumber, password } = req.body;
 
@@ -28,7 +29,7 @@ exports.userRegister = async (req, res) => {
     if (preuser) {
       return res.status(400).json({ error: "This user already exists in our organization" });
     } else {
-      const userregister = new users({ uname, email, phonenumber, password });
+      const userregister = new users({ uname, email, phonenumber, password,userGroup:"customer" });
       const storedata = await userregister.save();
       res.status(200).json(storedata);
     }
@@ -119,11 +120,8 @@ exports.userLogin = async (req, res) => {
 
   try {
     const preuser = await users.findOne({ email: email });
-    console.log(preuser.password)
-    console.log(password)
     if (preuser) {
       const isMatch = await bcrypt.compare(password, preuser.password);
-
       if (isMatch) {
         const tokens = await preuser.generateAuthToken();
         res.status(200).json({ message: "User login successfully done", tokens });
@@ -345,3 +343,4 @@ exports.resetPassword = async (req, res) => {
     res.status(400).json({ error: "Invalid details", details: error });
   }
 };
+
