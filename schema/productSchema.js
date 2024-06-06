@@ -54,10 +54,7 @@ productSchema.pre('save', async function (next) {
   if (!product.isNew) {
     return next();
   }
-  
-
   try {
-
     const cat = await Category.findOne({name:this.category});
     if(!cat){
       throw new Error("Category is invalid");
@@ -66,7 +63,6 @@ productSchema.pre('save', async function (next) {
     if(!ite){
       throw new Error("Item Type is invalid");
     }
-
     const counter = await Counter.findOneAndUpdate(
       { _id: 'productId' }, 
       { $inc: { seq: 1 } },

@@ -69,10 +69,8 @@ userSchema.methods.generateAuthToken = async function() {
   try {
     const accessToken = jwt.sign({ _id: this._id.toString() }, SECRECT_KEY, { expiresIn: '15m' });
     const refreshToken = jwt.sign({ _id: this._id.toString() }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
-
     this.tokens = this.tokens.concat({ token: refreshToken });
     await this.save();
-
     return { accessToken, refreshToken };
   } catch (error) {
     throw new Error(error);

@@ -124,7 +124,16 @@ exports.userLogin = async (req, res) => {
       const isMatch = await bcrypt.compare(password, preuser.password);
       if (isMatch) {
         const tokens = await preuser.generateAuthToken();
-        res.status(200).json({ message: "User login successfully done", tokens });
+        console.log(tokens);
+        const refreshToken = tokens.refreshToken;
+        const accessToken = tokens.accessToken;
+        res.cookie('jwt', refreshToken, {
+          httpOnly: true,
+          sameSite: 'None', secure: true,
+          maxAge: 24 * 60 * 60 * 1000
+      });
+        
+        res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
       } else {
         res.status(400).json({ error: "Invalid password" });
       }
@@ -137,12 +146,12 @@ exports.userLogin = async (req, res) => {
 };
 
 exports.refreshToken = async (req, res) => {
-  const { refreshToken } = req.body;
+  console.log(req.cookies);
+  if (req.cookies.jwt) {
 
-  if (!refreshToken) {
-    return res.status(400).json({ error: "Please provide a refresh token" });
-  }
-
+  const refreshToken = req.cookies.jwt
+  console.log(refreshToken)
+  
   try {
     const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
     const user = await users.findOne({ _id: decoded._id, 'tokens.token': refreshToken });
@@ -156,6 +165,10 @@ exports.refreshToken = async (req, res) => {
   } catch (error) {
     res.status(401).json({ error: "Invalid refresh token", details: error });
   }
+}
+else{
+  res.status(400).json({error:"please login again ivalid token"});
+}
 };
 
 exports.logout = async (req, res) => {
