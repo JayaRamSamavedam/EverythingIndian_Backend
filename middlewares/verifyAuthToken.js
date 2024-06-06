@@ -20,6 +20,8 @@ const verifyAuthToken = async (req, res, next) => {
     console.log(req.user);
     const usergrps = await UserGroup.findOne({name:user.userGroup});
     console.log(usergrps);
+    console.log(req.path);
+    console.log(req.original)
     next(); // Proceed with the request handler
   } catch (error) {
     console.error("Error verifying token:", error);
