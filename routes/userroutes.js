@@ -2,7 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const verify= require("../middlewares/verifyAuthToken")
 const controllers = require("../controllers/userController");
-
+const verifyrole = require("../middlewares/checkroleaccess");
 // routes
 const controller = require("../controllers/productController");
 
@@ -12,7 +12,7 @@ router.put("/prod/edit/:id",controller.editProduct);
 
 router.post("/prod/cat",controller.createCategory);
 
-router.post("/prod/item",verify,controller.createItemType);
+router.post("/prod/item",verify,verifyrole,controller.createItemType);
 
 router.post ("/prod/create",controller.createProduct);
 
