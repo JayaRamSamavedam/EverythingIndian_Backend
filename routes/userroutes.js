@@ -8,13 +8,13 @@ const controller = require("../controllers/productController");
 
 const admin = require("../controllers/adminController");
 // routes
-router.put("/prod/edit/:id",controller.editProduct);
+router.put("/prod/edit/:id",verify,verifyrole,controller.editProduct);
 
-router.post("/prod/cat",controller.createCategory);
+router.post("/prod/cat",verify,verifyrole,controller.createCategory);
 
 router.post("/prod/item",verify,verifyrole,controller.createItemType);
 
-router.post ("/prod/create",controller.createProduct);
+router.post ("/prod/create",verify,verifyrole,controller.createProduct);
 
 // register 
 router.post("/user/register",controllers.userRegister);
@@ -26,10 +26,10 @@ router.post("/user/login",controllers.userLogin);
 router.post("/user/refresh",controllers.refreshToken);
 
 //logout
-router.post("/user/logout",controllers.logout);
+router.post("/user/logout",verify,controllers.logout);
 
 //password change
-router.post("/user/changepassword",controllers.changePassword);
+router.post("/user/changepassword",verify,controllers.changePassword);
 
 //forgot password
 router.post("/user/forgotpassword",controllers.forgotPassword);
@@ -44,7 +44,7 @@ router.post("/user/verifyotp",controllers.verifyOtp);
 router.post("/user/resetpassword",controllers.resetPassword);
 
 //change the phone number
-router.post("/user/changephonenumber", controllers.changePhoneNumber);
+router.post("/user/changephonenumber",verify,controllers.changePhoneNumber);
 
 
 // admin create custome user

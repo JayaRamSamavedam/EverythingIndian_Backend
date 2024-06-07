@@ -172,7 +172,11 @@ else{
 };
 
 exports.logout = async (req, res) => {
-  const { refreshToken } = req.body;
+  if (req.cookies.jwt) {
+
+    const refreshToken = req.cookies.jwt;
+
+    // console.log(refreshToken)
 
   if (!refreshToken) {
     return res.status(400).json({ error: "Please provide a refresh token" });
@@ -192,6 +196,10 @@ exports.logout = async (req, res) => {
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     res.status(401).json({ error: "Invalid refresh token", details: error });
+  }
+}
+  else{
+    res.status(401).json({ error: "No refresh token" });
   }
 };
 
