@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+import mongoose from 'mongoose';
+import validator from 'validator';
+// const validator = require("validator");
 
 
 const userOtpSchema = new mongoose.Schema({
@@ -23,4 +24,4 @@ const userOtpSchema = new mongoose.Schema({
 // user otp model
 const userotp = new mongoose.model("userotps",userOtpSchema);
 
-module.exports = userotp
+export default userotp

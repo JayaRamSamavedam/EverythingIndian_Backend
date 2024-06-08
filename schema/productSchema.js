@@ -1,7 +1,12 @@
-const mongoose = require("mongoose");
-const Counter = require("./productCounterSchema");
-const ItemType = require("./itemtypeSchema");
-const Category = require("./categorySchema");
+import mongoose from 'mongoose';
+import Counter from './productCounterSchema.js';
+
+// const Counter = require("./productCounterSchema");
+import ItemType from './itemtypeSchema.js';
+// const ItemType = require("./itemtypeSchema");
+import Category from './categorySchema.js';
+
+// const Category = require("./categorySchema");
 
 const productSchema = new mongoose.Schema({
   productId: {
@@ -80,4 +85,4 @@ productSchema.pre('save', async function (next) {
 
 const Product = mongoose.model('Product', productSchema);
 
-module.exports =  Product ;
+export default Product ;

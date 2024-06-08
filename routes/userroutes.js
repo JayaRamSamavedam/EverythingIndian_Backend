@@ -1,20 +1,19 @@
-const express = require("express");
-const router = new express.Router();
-const verify= require("../middlewares/verifyAuthToken")
-const controllers = require("../controllers/userController");
-const verifyrole = require("../middlewares/checkroleaccess");
+import express from 'express';
+import verifyAuthToken from '../middlewares/verifyAuthToken.js';
+import * as controllers from '../controllers/userController.js';
+import  checkRoleAccess from '../middlewares/checkroleaccess.js';
+import * as controller from '../controllers/productController.js';
+import * as admin from '../controllers/adminController.js';
+
+const router = express.Router();
 // routes
-const controller = require("../controllers/productController");
+router.put("/prod/edit/:id",verifyAuthToken,checkRoleAccess,controller.editProduct);
 
-const admin = require("../controllers/adminController");
-// routes
-router.put("/prod/edit/:id",verify,verifyrole,controller.editProduct);
+router.post("/prod/cat",verifyAuthToken,checkRoleAccess,controller.createCategory);
 
-router.post("/prod/cat",verify,verifyrole,controller.createCategory);
+router.post("/prod/item",verifyAuthToken,checkRoleAccess,controller.createItemType);
 
-router.post("/prod/item",verify,verifyrole,controller.createItemType);
-
-router.post ("/prod/create",verify,verifyrole,controller.createProduct);
+router.post ("/prod/create",verifyAuthToken,checkRoleAccess,controller.createProduct);
 
 // register 
 router.post("/user/register",controllers.userRegister);
@@ -26,10 +25,10 @@ router.post("/user/login",controllers.userLogin);
 router.post("/user/refresh",controllers.refreshToken);
 
 //logout
-router.post("/user/logout",verify,controllers.logout);
+router.post("/user/logout",verifyAuthToken,controllers.logout);
 
 //password change
-router.post("/user/changepassword",verify,controllers.changePassword);
+router.post("/user/changepassword",verifyAuthToken,controllers.changePassword);
 
 //forgot password
 router.post("/user/forgotpassword",controllers.forgotPassword);
@@ -44,7 +43,7 @@ router.post("/user/verifyotp",controllers.verifyOtp);
 router.post("/user/resetpassword",controllers.resetPassword);
 
 //change the phone number
-router.post("/user/changephonenumber",verify,controllers.changePhoneNumber);
+router.post("/user/changephonenumber",verifyAuthToken,controllers.changePhoneNumber);
 
 
 // admin create custome user
@@ -97,4 +96,4 @@ router.post("/admin/role/edit",admin.updateRole);
 
 
 
-module.exports=router;
+export default router;

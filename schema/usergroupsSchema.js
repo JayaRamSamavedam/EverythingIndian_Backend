@@ -1,5 +1,7 @@
-const mongoose = require('mongoose');
-const Role = require("./roleSchema");
+import mongoose from 'mongoose';
+// const mongoose = require('mongoose');
+import Role from './roleSchema.js';
+// const Role = require("./roleSchema");
 const userGroupSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -29,4 +31,4 @@ userGroupSchema.pre('save', async function (next) {
 
 const UserGroup = mongoose.model('UserGroup', userGroupSchema);
 
-module.exports = UserGroup;
+export default UserGroup;

@@ -1,7 +1,11 @@
-const jwt = require("jsonwebtoken");
-const UserGroup = require("../schema/usergroupsSchema")
-const Role=require("../schema/roleSchema");
-const users = require("../schema/userSchema");
+// const jwt = require("jsonwebtoken");
+import UserGroup from "../schema/usergroupsSchema.js";
+// const UserGroup = require("../schema/usergroupsSchema")
+import jwt from "jsonwebtoken"
+import Role from "../schema/roleSchema.js"
+// const Role=require("../schema/roleSchema");
+import users from "../schema/userSchema.js"
+// const users = require("../schema/userSchema");
 // const { findOne } = require("../schema/roleCounterSchema");
 const verifyAuthToken = async (req, res, next) => {
   try {
@@ -30,4 +34,4 @@ const verifyAuthToken = async (req, res, next) => {
   }
 };
 
-module.exports = verifyAuthToken;
+export default verifyAuthToken;

@@ -1,5 +1,7 @@
-const mongoose = require('mongoose');
-const RoleCounter = require('./roleCounterSchema');
+// const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import RoleCounter from './roleCounterSchema.js';
+// const RoleCounter = require('./roleCounterSchema');
 
 const roleSchema = new mongoose.Schema({
   roleId:{
@@ -41,4 +43,4 @@ roleSchema.pre('save', async function (next) {
 
 const Role = mongoose.model('Role', roleSchema);
 
-module.exports = Role;
+export default Role;

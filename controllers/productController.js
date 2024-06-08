@@ -1,10 +1,12 @@
-const Product = require("../schema/productSchema");
-const Category = require("../schema/categorySchema");
-const ItemType = require("../schema/itemtypeSchema");
-const { ObjectId } = require('mongoose').Types;
-const jwt = require("jsonwebtoken");
+import Product from '../schema/productSchema.js';
+import Category from '../schema/categorySchema.js';
+import ItemType from '../schema/itemtypeSchema.js';
+import { Types } from 'mongoose';
+import jwt from 'jsonwebtoken';
+import { query } from 'express';
 
-exports.createCategory = async (req, res) => {
+
+export const createCategory = async (req, res) => {
   const { name } = req.body;
   try {
     const precat = await Category.findOne({ name });
@@ -19,7 +21,7 @@ exports.createCategory = async (req, res) => {
   }
 };
 
-exports.createItemType = async (req, res) => {
+export const createItemType = async (req, res) => {
   const { name } = req.body;
   try {
     const preItemType = await ItemType.findOne({ name });
@@ -34,7 +36,7 @@ exports.createItemType = async (req, res) => {
   }
 };
 
-exports.createProduct = async (req, res) => {
+export const createProduct = async (req, res) => {
 console.log(req);
   const { name, coverImage, images,category,description, price, discount, itemType } = req.body;
   // const name = req.body.name;
@@ -79,7 +81,7 @@ console.log(req);
   }
 };
 
-exports.editProduct = async (req, res) => {
+export const editProduct = async (req, res) => {
   const { id } = req.params;
   const { name, category, description, price, discount, itemType, imagesToDelete, newImages } = req.body;
 
@@ -152,3 +154,51 @@ exports.editProduct = async (req, res) => {
   }
 };
 
+
+export const getAllProducts= async(req,res)=>{
+  
+  try{
+    const {category} = req.body;
+  query = {}
+  if(category){
+    const cat = await Category.findOne({name:category});
+    if(cat)
+    query.category = category;
+  else{
+    return res.status(400).json({error:"category is invalid"});
+  }   
+  }
+
+  const result = Product.find(query);
+  return res.status(200).json(result);
+  }
+  catch(e){
+    res.status(400).json(e);
+  }
+};
+
+export const getProductById = async(req,res)=>{
+  try{
+    const {id} = req.body;
+    if (!id){
+      return res.status(400).json({error:"id not found "});
+    }
+    const product = Product.findById({productId:id});
+    if(!product){
+      return res.status(400).json({error:"invalid product id"});
+    }
+    return res.status(200).json(product);
+  }
+  catch(e){
+    return res.status(500).json(e);
+  }
+}
+
+// export const sortProduct = async(req,res)=>{
+//   try{
+//     const {order} = req.body;
+//     if(!order){
+//       return Product
+//     }
+//   }
+// }

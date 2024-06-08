@@ -1,5 +1,7 @@
-const UserGroup = require("../schema/usergroupsSchema");
-const Role = require("../schema/roleSchema");
+import UserGroup from "../schema/usergroupsSchema.js";
+// const UserGroup = require("../schema/usergroupsSchema");
+import Role from "../schema/roleSchema.js";
+// const Role = require("../schema/roleSchema");
 
 const checkRoleAccess = async (req, res, next) => {
   try {
@@ -42,4 +44,4 @@ const checkRoleAccess = async (req, res, next) => {
   }
 };
 
-module.exports = checkRoleAccess;
+export default checkRoleAccess;

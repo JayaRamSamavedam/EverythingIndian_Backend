@@ -1,8 +1,13 @@
-const users = require("../schema/userSchema");
-const nodemailer = require("nodemailer");
-const bcrypt = require("bcryptjs");
-const userotp = require("../schema/userOtp");
-const jwt = require("jsonwebtoken");
+// const users = require("../schema/userSchema");
+import users from "../schema/userSchema.js";
+import nodemailer from "nodemailer";
+// const nodemailer = require("nodemailer");
+import bcrypt from "bcryptjs"
+// const bcrypt = require("bcryptjs");
+import userotp from "../schema/userOtp.js";
+// const userotp = require("../schema/userOtp");
+import jwt from "jsonwebtoken"
+// const jwt = require("jsonwebtoken");
 
 const SECRECT_KEY = process.env.JWT_SECRET;
 const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET;
@@ -17,7 +22,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-exports.userRegister = async (req, res) => {
+export const userRegister = async (req, res) => {
   const { uname, email, phonenumber, password } = req.body;
 
   if (!uname || !email || !password || !phonenumber) {
@@ -38,7 +43,7 @@ exports.userRegister = async (req, res) => {
   }
 };
 
-exports.userOtpSend = async (req, res) => {
+export const userOtpSend = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
@@ -111,7 +116,7 @@ exports.userOtpSend = async (req, res) => {
     }
 };
 
-exports.userLogin = async (req, res) => {
+export const userLogin = async (req, res) => {
   const { email, password } = req.body;
   // const pass=password;
   if (!password || !email) {
@@ -145,7 +150,7 @@ exports.userLogin = async (req, res) => {
   }
 };
 
-exports.refreshToken = async (req, res) => {
+export const refreshToken = async (req, res) => {
   console.log(req.cookies);
   if (req.cookies.jwt) {
 
@@ -171,7 +176,7 @@ else{
 }
 };
 
-exports.logout = async (req, res) => {
+export const logout = async (req, res) => {
   if (req.cookies.jwt) {
 
     const refreshToken = req.cookies.jwt;
@@ -203,7 +208,7 @@ exports.logout = async (req, res) => {
   }
 };
 
-exports.changePassword = async (req, res) => {
+export const changePassword = async (req, res) => {
   const { email, oldPassword, newPassword } = req.body;
 
   if (!email || !oldPassword || !newPassword) {
@@ -244,7 +249,7 @@ exports.changePassword = async (req, res) => {
 };
 
   
-  exports.forgotPassword = async (req, res) => {
+  export const forgotPassword = async (req, res) => {
     const { email } = req.body;
   
     if (!email) {
@@ -289,7 +294,7 @@ exports.changePassword = async (req, res) => {
     }
   };
 
-exports.verifyOtp = async (req, res) => {
+export const verifyOtp = async (req, res) => {
     const { email, otp } = req.body;
     if (!email || !otp) {
       return res.status(400).json({ error: "Please provide email and OTP" });
@@ -307,7 +312,7 @@ exports.verifyOtp = async (req, res) => {
   };
   
   
-  exports.changePhoneNumber = async (req, res) => {
+  export const changePhoneNumber = async (req, res) => {
     const { accessToken, newPhoneNumber } = req.body;
   
     if (!accessToken || !newPhoneNumber) {
@@ -333,7 +338,7 @@ exports.verifyOtp = async (req, res) => {
     }
   };
   
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
   if (!email || !otp || !newPassword) {

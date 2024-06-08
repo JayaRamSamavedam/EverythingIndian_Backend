@@ -1,12 +1,15 @@
-const User = require("../schema/userSchema");
-const UserGroup = require("../schema/usergroupsSchema");
-const Role = require("../schema/roleSchema")
+import User from "../schema/userSchema.js";
+// const User = require("../schema/userSchema.js");
+// const UserGroup = require("../schema/usergroupsSchema.js");
+import UserGroup from "../schema/usergroupsSchema.js";
+import Role from "../schema/roleSchema.js";
+// const Role = require("../schema/roleSchema.js")
 
 
 
 //create admin user
 
-exports.createCustomUser = async (req, res) => {
+export const createCustomUser = async (req, res) => {
   const { uname, email, phonenumber, password,userGroup } = req.body;
 
   if (!uname || !email || !password || !phonenumber) {
@@ -30,7 +33,7 @@ exports.createCustomUser = async (req, res) => {
   }
 };
 
-exports.deleteUser = async(req,res)=>{
+export const deleteUser = async(req,res)=>{
   const {email} = req.body;
   try{
     const user = await User.findOneAndDelete({email:email});
@@ -41,7 +44,7 @@ exports.deleteUser = async(req,res)=>{
   }
 }
 
-exports.updateUserGroup = async(req,res)=>{
+export const updateUserGroup = async(req,res)=>{
   const {email,usergrp} = req.body;
   try{ 
     const userp = UserGroup.findOne({name:usergrp});
@@ -65,7 +68,7 @@ exports.updateUserGroup = async(req,res)=>{
 
 
 // Create Role
-exports.createRole = async (req, res) => {    
+export const createRole = async (req, res) => {    
   const { name, permissions } = req.body;
   try {
     const existingRole = await Role.findOne({ name });
@@ -81,7 +84,7 @@ exports.createRole = async (req, res) => {
 };
 
 // Update Role
-exports.updateRole = async (req, res) => {
+export const updateRole = async (req, res) => {
   const { id } = req.params;
   const { name, permissions } = req.body;
 
@@ -103,7 +106,7 @@ exports.updateRole = async (req, res) => {
 };
 
 // Create User Group
-exports.createUserGroups = async (req, res) => {
+export const createUserGroups = async (req, res) => {
   const { name, roles, description } = req.body;
 
   try {
@@ -128,7 +131,7 @@ exports.createUserGroups = async (req, res) => {
 };
 
 // Update User Group
-exports.updateusergrp = async (req, res) => {
+export const updateusergrp = async (req, res) => {
   const { id } = req.params;
   const { name, roles, description } = req.body;
 

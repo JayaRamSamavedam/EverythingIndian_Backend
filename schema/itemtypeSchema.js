@@ -1,6 +1,4 @@
-const mongoose = require('mongoose');
-
-
+import mongoose from 'mongoose';
 
 
 const itemTypeSchema = new mongoose.Schema({
@@ -13,4 +11,4 @@ const itemTypeSchema = new mongoose.Schema({
 
 
 const ItemType = mongoose.model('ItemType', itemTypeSchema);
-module.exports =  ItemType;
+export default ItemType;

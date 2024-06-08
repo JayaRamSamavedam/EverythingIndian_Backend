@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const counterSchema = new mongoose.Schema({
   _id: String,
@@ -7,4 +7,4 @@ const counterSchema = new mongoose.Schema({
 
 const RoleCounter = mongoose.model('RoleCounter', counterSchema);
 
-module.exports =RoleCounter;
+export default RoleCounter;

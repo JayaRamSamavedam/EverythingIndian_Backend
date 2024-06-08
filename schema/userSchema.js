@@ -1,8 +1,13 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const UserGroup = require("./usergroupsSchema");
+import mongoose from 'mongoose';
+import validator from 'validator';
+// const validator = require("validator");
+import bcrypt from "bcryptjs";
+// const bcrypt = require("bcryptjs");
+import jwt from "jsonwebtoken";
+
+// const jwt = require("jsonwebtoken");
+import UserGroup from './usergroupsSchema.js';
+// const UserGroup = require("./usergroupsSchema");
 
 const SECRECT_KEY = process.env.JWT_SECRET;
 const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET; 
@@ -80,4 +85,4 @@ userSchema.methods.generateAuthToken = async function() {
 
 const Users = mongoose.model("Users", userSchema);
 
-module.exports = Users;
+export default Users;
