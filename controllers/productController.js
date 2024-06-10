@@ -50,7 +50,7 @@ console.log(req);
   try {
     
     // Find category and item type
-    console.log(name)
+    console.log(category)
     const cat = await Category.findOne({ name: category });
     const ite = await ItemType.findOne({ name: itemType });
 
@@ -194,11 +194,31 @@ export const getProductById = async(req,res)=>{
   }
 }
 
-// export const sortProduct = async(req,res)=>{
-//   try{
-//     const {order} = req.body;
-//     if(!order){
-//       return Product
-//     }
-//   }
-// }
+export const sortPriceProduct = async(req, res) => {
+  try {
+    const { order, category } = req.body;
+    let filters = {};
+    
+    if (category) {
+      const cat = await Category.findOne({ name: category });
+      if (cat) {
+        filters.category = category;
+      } else {
+        return res.status(400).json({ error: "Invalid category" });
+      }
+    }
+    
+    let sortCriteria = {};
+    if (order === 'asc') {
+      sortCriteria.price = 1; // Ascending order
+    } else if (order === 'desc') {
+      sortCriteria.price = -1; // Descending order
+    }
+    
+    const result = await Product.find(filters).sort(sortCriteria);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+

@@ -1,18 +1,12 @@
 import mongoose from 'mongoose';
 import Counter from './productCounterSchema.js';
-
-// const Counter = require("./productCounterSchema");
 import ItemType from './itemtypeSchema.js';
-// const ItemType = require("./itemtypeSchema");
 import Category from './categorySchema.js';
-
-// const Category = require("./categorySchema");
 
 const productSchema = new mongoose.Schema({
   productId: {
     type: Number,
     unique: true, // Ensure unique product IDs
-    required: true,
   },
   name: {
     type: String,
@@ -27,8 +21,8 @@ const productSchema = new mongoose.Schema({
     required: false,
   },
   category: {
-    type:String,
-    required:true,
+    type: String,
+    required: true,
   },
   description: {
     type: String,
@@ -51,23 +45,34 @@ const productSchema = new mongoose.Schema({
   },
   itemType: {
     type: String,
-    required:true,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  numRatings: {
+    type: Number,
+    required: true,
+    default: 0,
   },
 });
+
 productSchema.pre('save', async function (next) {
   const product = this;
   if (!product.isNew) {
     return next();
   }
   try {
-    const cat = await Category.findOne({name:this.category});
-    if(!cat){
-      throw new Error("Category is invalid");
-    }
-    const ite = await ItemType.findOne({name:this.itemType});
-    if(!ite){
-      throw new Error("Item Type is invalid");
-    }
+    // const cat = await Category.findOne({ name: product.category });
+    // if (!cat) {
+    //   throw new Error("Category is invalid");
+    // }
+    // const ite = await ItemType.findOne({ name: product.itemType });
+    // if (!ite) {
+    //   throw new Error("Item Type is invalid");
+    // }
     const counter = await Counter.findOneAndUpdate(
       { _id: 'productId' }, 
       { $inc: { seq: 1 } },
@@ -82,7 +87,6 @@ productSchema.pre('save', async function (next) {
   }
 });
 
-
 const Product = mongoose.model('Product', productSchema);
 
-export default Product ;
+export default Product;

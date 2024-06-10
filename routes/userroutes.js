@@ -7,13 +7,7 @@ import * as admin from '../controllers/adminController.js';
 
 const router = express.Router();
 // routes
-router.put("/prod/edit/:id",verifyAuthToken,checkRoleAccess,controller.editProduct);
 
-router.post("/prod/cat",verifyAuthToken,checkRoleAccess,controller.createCategory);
-
-router.post("/prod/item",verifyAuthToken,checkRoleAccess,controller.createItemType);
-
-router.post ("/prod/create",verifyAuthToken,checkRoleAccess,controller.createProduct);
 
 // register 
 router.post("/user/register",controllers.userRegister);

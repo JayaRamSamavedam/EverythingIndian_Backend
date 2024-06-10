@@ -45,7 +45,7 @@ app.use(limiter);
 
 // CORS configuration
 const corsOptions = {
-    origin: 'https://your-allowed-origin.com', // specify your allowed origins
+    origin: "*", // specify your allowed origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 };
@@ -60,12 +60,14 @@ app.use(cookieParser());
 import './db/connection.js';
 
 // Import your routes
-import router from './routes/userroutes.js';
+import userrouter from './routes/userroutes.js';
 // import productrouter from './routes/productroutes.js';
 
-app.use(router);
-// app.use(productrouter);
-
+app.use(userrouter);
+import productrouter from "./routes/productroutes.js"
+app.use(productrouter);
+import cartrouter from "./routes/cartroutes.js";
+app.use(cartrouter);
 const PORT = process.env.PORT || 4002;
 
 app.listen(PORT, () => {
