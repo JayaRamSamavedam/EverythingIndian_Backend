@@ -73,7 +73,7 @@ app.use(cartrouter);
 import adminrouter from "./routes/adminroutes.js";
 app.use(adminrouter);
 const PORT = process.env.PORT || 4002;
-
+app.get("/", (req, res) => res.send("Express on Vercel"));
 app.listen(PORT, () => {
     console.log(`Server start at Port No: ${PORT}`);
 });
