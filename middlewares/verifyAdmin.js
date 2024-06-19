@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-
+// const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 // Use uppercase for environment variable names to follow convention
 const adminUsername = process.env.admin;
 const adminPassword = process.env.pass;
@@ -40,4 +40,4 @@ const verifyAdminCredentials = (req, res, next) => {
   }
 };
 
-module.exports = verifyAdminCredentials;
+export default verifyAdminCredentials;

@@ -13,5 +13,7 @@ router.post("/prod/item",verifyAuthToken,checkRoleAccess,controller.createItemTy
 
 router.post ("/prod/create",verifyAuthToken,checkRoleAccess,controller.createProduct);
 
+router.get("/prod/get",verifyAuthToken,checkRoleAccess,controller.getAllProducts);
 
+router.get("/prod",controller.fetchProducts);
 export default router;

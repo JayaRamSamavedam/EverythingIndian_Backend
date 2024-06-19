@@ -19,11 +19,11 @@ const verifyAuthToken = async (req, res, next) => {
     console.log(token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
      // Verify token using secret key
-     const user = await users.findOne({ _id: decoded._id});
-
+     const user = await users.findOne({ _id: decoded._id, 'accessToken.token': token });
 
      req.user = user; // Attach decoded user information to the request object
-    // console.log(req.user);
+    console.log(req.user);
+    req.token =token;
     const usergrps = await UserGroup.findOne({name:user.userGroup});
     req.usergrps = usergrps;
     console.log(usergrps.roles.length)

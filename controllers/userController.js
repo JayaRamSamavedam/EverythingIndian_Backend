@@ -8,7 +8,7 @@ import userotp from "../schema/userOtp.js";
 // const userotp = require("../schema/userOtp");
 import jwt from "jsonwebtoken"
 // const jwt = require("jsonwebtoken");
-
+  
 const SECRECT_KEY = process.env.JWT_SECRET;
 const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET;
 
@@ -39,7 +39,7 @@ export const userRegister = async (req, res) => {
       res.status(200).json(storedata);
     }
   } catch (error) {
-    res.status(400).json({ error: "Invalid details", error });
+    res.status(500).json({ error: "Invalid details", error });
   }
 };
 
@@ -49,11 +49,8 @@ export const userOtpSend = async (req, res) => {
     if (!email) {
         res.status(400).json({ error: "Please Enter Your Email" })
     }
-
-
     try {
         const presuer = await users.findOne({ email: email });
-
         if (presuer) {
             const OTP = Math.floor(100000 + Math.random() * 900000);
 
@@ -151,24 +148,23 @@ export const userLogin = async (req, res) => {
 };
 
 export const refreshToken = async (req, res) => {
-  console.log(req.cookies);
+  // console.log(req.cookies);
   if (req.cookies.jwt) {
 
   const refreshToken = req.cookies.jwt
-  console.log(refreshToken)
   
   try {
     const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
     const user = await users.findOne({ _id: decoded._id, 'tokens.token': refreshToken });
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid refresh token" });
+      return res.status(400).json({ error: "Invalid refresh token" });
     }
 
     const accessToken = jwt.sign({ _id: user._id.toString() }, SECRECT_KEY, { expiresIn: '15m' });
     res.status(200).json({ accessToken });
   } catch (error) {
-    res.status(401).json({ error: "Invalid refresh token", details: error });
+    res.status(400).json({ error: "Invalid refresh token", details: error });
   }
 }
 else{
@@ -190,12 +186,13 @@ export const logout = async (req, res) => {
   try {
     const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
     const user = await users.findOne({ _id: decoded._id, 'tokens.token': refreshToken });
-
     if (!user) {
-      return res.status(401).json({ error: "Invalid refresh token" });
+      return res.status(400).json({ error: "Invalid refresh token" });
     }
 
     user.tokens = user.tokens.filter(token => token.token !== refreshToken);
+    // user.tokens = [];
+    user.accessToken=user.accessToken.filter(accessToken => accessToken.token !== req.token);
     await user.save();
 
     res.status(200).json({ message: "Logout successful" });
@@ -281,7 +278,6 @@ export const changePassword = async (req, res) => {
         subject: "Password Reset OTP",
         text: `Your password reset OTP is: ${OTP}`,
       };
-  
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           return res.status(400).json({ error: "Email not sent", details: error });
@@ -313,10 +309,10 @@ export const verifyOtp = async (req, res) => {
   
   
   export const changePhoneNumber = async (req, res) => {
-    const { accessToken, newPhoneNumber } = req.body;
+    const {  newPhoneNumber } = req.body;
   
-    if (!accessToken || !newPhoneNumber) {
-      return res.status(400).json({ error: "Please provide access token and new phone number" });
+    if (!newPhoneNumber) {
+      return res.status(400).json({ error: "Please provide  new phone number" });
     }
   
     try {
@@ -338,6 +334,32 @@ export const verifyOtp = async (req, res) => {
     }
   };
   
+
+  export const changeUname = async(req,res)=>{
+    const { newuname } = req.body;
+  
+    if (!newuname) {
+      return res.status(400).json({ error: "Please provide  new user name" });
+    }
+  
+    try {
+      // Verify access token
+      const decoded = jwt.verify(accessToken, SECRECT_KEY);
+      const user = await users.findOne({ _id: decoded._id, 'tokens.token': accessToken });
+  
+      if (!user) {
+        return res.status(401).json({ error: "Invalid access token" });
+      }
+  
+      // Update phone number
+      user.uname = newuname;
+      await user.save();
+  
+      res.status(200).json({ message: "uname changed successfully" });
+    } catch (error) {
+      res.status(400).json({ error: "Invalid details", details: error });
+    }
+  }
 export const resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
@@ -370,3 +392,19 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+export const verifyToken = async (req,res)=>{
+  try{
+    const authHeader = req.headers.authorization;
+    // console.log(authHeader);
+    const token = authHeader && authHeader.split(' ')[1];
+    if(!token){
+      return res.status(400).json({error:"missing token"});
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return res.status(200).json({message:"token verified"});
+  }
+  catch(e){
+    return res.status(500).json({error:"invalid token"});
+  }
+};

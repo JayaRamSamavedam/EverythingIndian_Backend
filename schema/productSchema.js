@@ -57,6 +57,7 @@ const productSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  // reviews
 });
 
 productSchema.pre('save', async function (next) {
@@ -65,14 +66,14 @@ productSchema.pre('save', async function (next) {
     return next();
   }
   try {
-    // const cat = await Category.findOne({ name: product.category });
-    // if (!cat) {
-    //   throw new Error("Category is invalid");
-    // }
-    // const ite = await ItemType.findOne({ name: product.itemType });
-    // if (!ite) {
-    //   throw new Error("Item Type is invalid");
-    // }
+    const cat = await Category.findOne({ name: product.category });
+    if (!cat) {
+      throw new Error("Category is invalid");
+    }
+    const ite = await ItemType.findOne({ name: product.itemType });
+    if (!ite) {
+      throw new Error("Item Type is invalid");
+    }
     const counter = await Counter.findOneAndUpdate(
       { _id: 'productId' }, 
       { $inc: { seq: 1 } },

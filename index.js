@@ -10,6 +10,8 @@ dotenv.config();
 
 const app = express();
 
+app.use(express.urlencoded({ extended: false }))
+
 // Configure Helmet for strong security
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy({
@@ -68,6 +70,8 @@ import productrouter from "./routes/productroutes.js"
 app.use(productrouter);
 import cartrouter from "./routes/cartroutes.js";
 app.use(cartrouter);
+import adminrouter from "./routes/adminroutes.js";
+app.use(adminrouter);
 const PORT = process.env.PORT || 4002;
 
 app.listen(PORT, () => {

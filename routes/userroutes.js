@@ -39,55 +39,8 @@ router.post("/user/resetpassword",controllers.resetPassword);
 //change the phone number
 router.post("/user/changephonenumber",verifyAuthToken,controllers.changePhoneNumber);
 
+router.post("/user/changeusername",verifyAuthToken,controllers.changeUname);
 
-// admin create custome user
-router.post("/admin/user/create",admin.createCustomUser);
-
-// admin delete any user
-router.post("/admin/user/delete",admin.deleteUser);
-
-// admin create role
-router.post("/admin/role/create",admin.createRole);
-
-// admin create usergrp
-router.post("/admin/usergroup/create",admin.createUserGroups);
-
-// admin edit usergrp
-router.post("/admin/usergroup/edit",admin.updateUserGroup);
-
-// admin edit role
-router.post("/admin/role/edit",admin.updateRole);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+router.post("/verify",controllers.verifyToken);
 
 export default router;

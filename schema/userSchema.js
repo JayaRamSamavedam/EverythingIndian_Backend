@@ -1,13 +1,8 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
-// const validator = require("validator");
 import bcrypt from "bcryptjs";
-// const bcrypt = require("bcryptjs");
 import jwt from "jsonwebtoken";
-
-// const jwt = require("jsonwebtoken");
 import UserGroup from './usergroupsSchema.js';
-// const UserGroup = require("./usergroupsSchema");
 
 const SECRECT_KEY = process.env.JWT_SECRET;
 const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET; 
@@ -32,6 +27,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
+    validate(value) {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(value)) {
+        throw new Error("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character");
+      }
+    },
   },
   phonenumber: {
     type: String,
@@ -55,7 +56,16 @@ const userSchema = new mongoose.Schema({
         required: true,
       }
     }
+  ],
+  accessToken:[
+  {
+    token:{
+      type:String,
+      required:true,
+    }
+  }
   ]
+
 });
 
 // Hash password before saving
@@ -75,6 +85,7 @@ userSchema.methods.generateAuthToken = async function() {
     const accessToken = jwt.sign({ _id: this._id.toString() }, SECRECT_KEY, { expiresIn: '15m' });
     const refreshToken = jwt.sign({ _id: this._id.toString() }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
     this.tokens = this.tokens.concat({ token: refreshToken });
+    this.accessToken = this.accessToken.concat({token:accessToken});
     await this.save();
     return { accessToken, refreshToken };
   } catch (error) {

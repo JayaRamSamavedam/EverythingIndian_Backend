@@ -156,10 +156,9 @@ export const editProduct = async (req, res) => {
 
 
 export const getAllProducts= async(req,res)=>{
-  
+   let query = {}
   try{
     const {category} = req.body;
-  query = {}
   if(category){
     const cat = await Category.findOne({name:category});
     if(cat)
@@ -168,12 +167,13 @@ export const getAllProducts= async(req,res)=>{
     return res.status(400).json({error:"category is invalid"});
   }   
   }
-
-  const result = Product.find(query);
+console.log("I am safe")
+  const result = await Product.find(query);
+  console.log("i am invoked");
   return res.status(200).json(result);
   }
   catch(e){
-    res.status(400).json(e);
+    res.status(400).json({error:e});
   }
 };
 
@@ -222,3 +222,38 @@ export const sortPriceProduct = async(req, res) => {
   }
 };
 
+
+
+
+export const fetchProducts = async (req, res) => {
+  const { category, minPrice, maxPrice, sortBy, orderBy } = req.query;
+
+  // Construct the filter object
+  const filter = {};
+  if (category) {
+    filter.category = category;
+  }
+  if (minPrice !== undefined) {
+    filter.price = { ...filter.price, $gte: Number(minPrice) };
+  }
+  if (maxPrice !== undefined) {
+    filter.price = { ...filter.price, $lte: Number(maxPrice) };
+  }
+
+  // Construct the sort object
+  const sort = {};
+  if (sortBy) {
+    const sortOrder = orderBy && orderBy.toLowerCase() === 'desc' ? -1 : 1;
+    sort[sortBy] = sortOrder;
+  }
+  console.log(filter)
+
+  try {
+    const products = await Product.find().sort(sort);
+    console.log(products)
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
