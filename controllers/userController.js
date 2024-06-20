@@ -134,7 +134,8 @@ export const userLogin = async (req, res) => {
         res.cookie('jwt', refreshToken, {
           httpOnly: true,
           sameSite: 'None', secure: true,
-          maxAge: 24 * 60 * 60 * 1000
+          maxAge: 24 * 60 * 60 * 1000,
+          domain: 'localhost'
       });
         
         res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
@@ -152,6 +153,7 @@ export const userLogin = async (req, res) => {
 
 export const refreshToken = async (req, res) => {
   // console.log(req.cookies);
+  console.log('hellow logout')
   if (req.cookies.jwt) {
 
   const refreshToken = req.cookies.jwt
@@ -177,11 +179,13 @@ else{
 };
 
 export const logout = async (req, res) => {
+  console.log("Hi from logout")
+  console.log(req.cookies.jwt)
   if (req.cookies.jwt) {
 
     const refreshToken = req.cookies.jwt;
 
-    // console.log(refreshToken)
+    console.log(refreshToken)
 
   if (!refreshToken) {
     return res.status(400).json({ error: "Please provide a refresh token" });
@@ -403,7 +407,11 @@ export const verifyToken = async (req,res)=>{
     const token = authHeader && authHeader.split(' ')[1];
     if(token){
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return res.status(200).json({message:"token verified"});}
+    const user = await users.findOne({ _id: decoded._id, 'accessToken.token': token });
+    if(user){
+    return res.status(200).json({message:"token verified"});
+  }
+    }
   }
   catch(e){
     return res.status(500).json({error:"invalid token"});

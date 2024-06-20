@@ -9,8 +9,9 @@ import users from "../schema/userSchema.js"
 // const { findOne } = require("../schema/roleCounterSchema");
 const verifyAuthToken = async (req, res, next) => {
   try {
+    // console.log(res.cookies);
     const authHeader = req.headers.authorization;
-    // console.log(authHeader);
+    console.log(authHeader);
     const token = authHeader && authHeader.split(' ')[1]; // Extract token from 'Bearer <token>' format
 
     if (!token) {
@@ -20,13 +21,13 @@ const verifyAuthToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
      // Verify token using secret key
      const user = await users.findOne({ _id: decoded._id, 'accessToken.token': token });
-
      req.user = user; // Attach decoded user information to the request object
     console.log(req.user);
     req.token =token;
     const usergrps = await UserGroup.findOne({name:user.userGroup});
     req.usergrps = usergrps;
-    console.log(usergrps.roles.length)
+    console.log(usergrps.roles.length);
+    console.log("I am invoked");
     next(); // Proceed with the request handler
   } catch (error) {
     console.error("Error verifying token:", error);
