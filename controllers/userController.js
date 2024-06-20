@@ -64,7 +64,7 @@ export const userOtpSend = async (req, res) => {
                 );
                 await updateData.save();
 
-                const mailOptions = {
+               const mailOptions = {
                     from: process.env.EMAIL,
                     to: email,
                     subject: "Sending Eamil For Otp Validation",
@@ -115,7 +115,8 @@ export const userOtpSend = async (req, res) => {
 
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
-  // const pass=password;
+  console.log("I am invoked");
+  console.log(email,password)
   if (!password || !email) {
     return res.status(400).json({ error: "Please enter your password and email" });
   }
@@ -129,6 +130,7 @@ export const userLogin = async (req, res) => {
         console.log(tokens);
         const refreshToken = tokens.refreshToken;
         const accessToken = tokens.accessToken;
+
         res.cookie('jwt', refreshToken, {
           httpOnly: true,
           sameSite: 'None', secure: true,
@@ -143,7 +145,8 @@ export const userLogin = async (req, res) => {
       res.status(400).json({ error: "Invalid email" });
     }
   } catch (error) {
-    res.status(400).json({ error: "Invalid details", error });
+    console.error("Login failed:", error);
+    res.status(400).json({ error: "Server details", error });
   }
 };
 
@@ -164,6 +167,7 @@ export const refreshToken = async (req, res) => {
     const accessToken = jwt.sign({ _id: user._id.toString() }, SECRECT_KEY, { expiresIn: '15m' });
     res.status(200).json({ accessToken });
   } catch (error) {
+
     res.status(400).json({ error: "Invalid refresh token", details: error });
   }
 }
