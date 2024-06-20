@@ -401,12 +401,9 @@ export const verifyToken = async (req,res)=>{
     const authHeader = req.headers.authorization;
     // console.log(authHeader);
     const token = authHeader && authHeader.split(' ')[1];
-    if(!token){
-      return res.status(400).json({error:"missing token"});
-    }
-
+    if(token){
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return res.status(200).json({message:"token verified"});
+    return res.status(200).json({message:"token verified"});}
   }
   catch(e){
     return res.status(500).json({error:"invalid token"});
