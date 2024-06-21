@@ -139,7 +139,7 @@ export const userLogin = async (req, res) => {
           maxAge: 24 * 60 * 60 * 1000,
           httpOnly: true, // Recommended for security reasons
           domain: 'reimagined-fishstick-sigma.vercel.app',
-          path: '/' // Ensure this matches your application route structure
+          path: '/login' // Ensure this matches your application route structure
       });
     //   res.setHeader('Set-Cookie', [
     //     `jwt=${refreshToken}`,
