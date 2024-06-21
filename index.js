@@ -47,7 +47,7 @@ app.use(limiter);
 
 // CORS configuration
 const corsOptions = {
-    origin:["http://localhost:3000","http://10.56.30.53:3000","https://reimagined-fishstick-sigma.vercel.app"], // specify your allowed origins
+    origin:["*"], // specify your allowed origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 };

@@ -169,7 +169,7 @@ export const refreshToken = async (req, res) => {
   try {
     const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
     const user = await users.findOne({ _id: decoded._id, 'tokens.token': String(refreshToken) });
-
+    console.log(user)
     if (!user) {
       return res.status(400).json({ error: "Invalid refresh token" });
     }
@@ -192,9 +192,8 @@ export const logout = async (req, res) => {
   if (req.cookies.jwt) {
 
     const refreshToken = req.cookies.jwt;
-
     console.log(refreshToken)
-
+    console.log(typeof(refreshToken))
   if (!refreshToken) {
     return res.status(400).json({ error: "Please provide a refresh token" });
   }
@@ -205,7 +204,6 @@ export const logout = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "Invalid refresh token" });
     }
-
     user.tokens = user.tokens.filter(token => token.token !== refreshToken);
     // user.tokens = [];
     user.accessToken=user.accessToken.filter(accessToken => accessToken.token !== req.token);
