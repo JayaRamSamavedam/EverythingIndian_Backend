@@ -133,16 +133,20 @@ export const userLogin = async (req, res) => {
 
         // secure : true
         // httpOnly: true,
-        res.cookie('jwt', refreshToken, {
-          sameSite: 'None', 
-          secure: true, // Secure flag must be true when sameSite is 'None'
-          maxAge: 24 * 60 * 60 * 1000,
-          httpOnly: true, // Recommended for security reasons
-          domain: 'localhost',
-          path: '/' // Ensure this matches your application route structure
-      });
+      //   res.cookie('jwt', refreshToken, {
+      //     sameSite: 'None', 
+      //     secure: true, // Secure flag must be true when sameSite is 'None'
+      //     maxAge: 24 * 60 * 60 * 1000,
+      //     httpOnly: true, // Recommended for security reasons
+      //     domain: 'localhost',
+      //     path: '/' // Ensure this matches your application route structure
+      // });
+      res.setHeader('Set-Cookie', [
+        `jwt=${refreshToken}; Max-Age=86400; HttpOnly; Secure; SameSite=None; Path=/; Domain=localhost`,
+        'type=ninja; Path=/'
+    ]);
 
-      res.setHeader('Set-Cookie',['type=ninja']).status(200).json({ message: "User login successfully done", accessToken:accessToken });
+      res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
       } else {
         res.status(400).json({ error: "Invalid password" });
       }
