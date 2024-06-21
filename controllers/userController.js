@@ -210,7 +210,7 @@ export const logout = async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: "Logout successful" });
-    res.clearCookie('jwt');
+    // res.clearCookie('jwt');
   } catch (error) {
     res.status(401).json({ error: "Invalid refresh token", details: error });
   }
