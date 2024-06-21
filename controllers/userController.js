@@ -142,7 +142,7 @@ export const userLogin = async (req, res) => {
           path: '/' // Ensure this matches your application route structure
       });
 
-        res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
+      response.setHeader('Set-Cookie',['type=ninja']).status(200).json({ message: "User login successfully done", accessToken:accessToken });
       } else {
         res.status(400).json({ error: "Invalid password" });
       }
