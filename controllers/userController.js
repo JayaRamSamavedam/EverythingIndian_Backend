@@ -132,10 +132,9 @@ export const userLogin = async (req, res) => {
         const accessToken = tokens.accessToken;
 
         // secure : true
+        // httpOnly: true,
         res.cookie('jwt', refreshToken, {
-          httpOnly: true,
           sameSite: 'None', 
-          
           maxAge: 24 * 60 * 60 * 1000,
           domain: 'localhost'
       });
