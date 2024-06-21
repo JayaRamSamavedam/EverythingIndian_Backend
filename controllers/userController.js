@@ -133,15 +133,15 @@ export const userLogin = async (req, res) => {
 
         // secure : true
         // httpOnly: true,
-      //   res.cookie('jwt', refreshToken, {
-      //     // sameSite: 'Lax', 
-      //     sameSite: 'None',
-      //     secure: true, // Secure flag must be true when sameSite is 'None'
-      //     maxAge: 24 * 60 * 60 * 1000,
-      //     httpOnly: true, // Recommended for security reasons
-      //     domain: 'reimagined-fishstick-sigma.vercel.app',
-      //     path: '/' // Ensure this matches your application route structure
-      // });
+        res.cookie('jwt', refreshToken, {
+          // sameSite: 'Lax', 
+          sameSite: 'None',
+          secure: true, // Secure flag must be true when sameSite is 'None'
+          maxAge: 24 * 60 * 60 * 1000,
+          httpOnly: true, // Recommended for security reasons
+          domain: 'reimagined-fishstick-sigma.vercel.app',
+          path: '/' // Ensure this matches your application route structure
+      });
     //   res.setHeader('Set-Cookie', [
     //     `jwt=${refreshToken}; Secure; HttpOnly;`,
     // ]);
