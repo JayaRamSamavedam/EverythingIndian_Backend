@@ -145,7 +145,7 @@ export const userLogin = async (req, res) => {
     //     `jwt=${refreshToken}`,
     //     // 'type=ninja; Path=/'
     // ]);
-    res.setHeader('Set-Cookie', `jwt=${refreshToken}; SameSite=None; Max-Age=86400; Path=/; Domain=localhost`).status(200).json({ message: "User login successfully done", accessToken:accessToken , refreshToken:refreshToken});
+    res.setHeader('Set-Cookie', `jwt=${refreshToken}; SameSite=None; Secure; HttpOnly; Max-Age=86400; Path=/; Domain=reimagined-fishstick-sigma.vercel.app`).status(200).json({ message: "User login successfully done", accessToken:accessToken });
       } else {
         res.status(400).json({ error: "Invalid password" });
       }
