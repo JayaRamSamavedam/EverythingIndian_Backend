@@ -134,7 +134,8 @@ export const userLogin = async (req, res) => {
         // secure : true
         // httpOnly: true,
         res.cookie('jwt', refreshToken, {
-          sameSite: 'None', 
+          sameSite: 'Lax', 
+          // sameSite: 'Strict'
           secure: true, // Secure flag must be true when sameSite is 'None'
           maxAge: 24 * 60 * 60 * 1000,
           httpOnly: true, // Recommended for security reasons
