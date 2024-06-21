@@ -145,7 +145,7 @@ export const userLogin = async (req, res) => {
     //   res.setHeader('Set-Cookie', [
     //     `jwt=${refreshToken}; Secure; HttpOnly;`,
     // ]);
-    // res.setHeader("Access-Control-Allow-Credentials","true");
+    res.setHeader("Access-Control-Allow-Credentials","true");
 res.status(200).json({ message: "User login successfully done", accessToken:accessToken,refreshToken:refreshToken });
       } else {
         res.status(400).json({ error: "Invalid password" });
@@ -168,7 +168,7 @@ export const refreshToken = async (req, res) => {
   
   try {
     const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
-    const user = await users.findOne({ _id: decoded._id, 'tokens.token': refreshToken });
+    const user = await users.findOne({ _id: decoded._id, 'tokens.token': String(refreshToken) });
 
     if (!user) {
       return res.status(400).json({ error: "Invalid refresh token" });
