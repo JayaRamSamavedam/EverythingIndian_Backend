@@ -139,7 +139,7 @@ export const userLogin = async (req, res) => {
           secure: true, // Secure flag must be true when sameSite is 'None'
           maxAge: 24 * 60 * 60 * 1000,
           // httpOnly: true, // Recommended for security reasons
-          domain: 'https://reimagined-fishstick-sigma.vercel.app',
+          // domain: 'https://reimagined-fishstick-sigma.vercel.app',
           path: '/' // Ensure this matches your application route structure
       });
     //   res.setHeader('Set-Cookie', [
