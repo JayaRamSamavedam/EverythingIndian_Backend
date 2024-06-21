@@ -143,8 +143,7 @@ export const userLogin = async (req, res) => {
       //     path: '/' // Ensure this matches your application route structure
       // });
       res.setHeader('Set-Cookie', [
-        `jwt=${refreshToken}`,
-        // 'type=ninja; Path=/'
+        `jwt=${refreshToken}; Secure; HttpOnly; SameSite=None; Max-Age=86400; Path=/; Domain=reimagined-fishstick-sigma.vercel.app`,
     ]);
     res.setHeader("Access-Control-Allow-Credentials","true");
 res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
