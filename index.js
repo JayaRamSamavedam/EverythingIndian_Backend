@@ -53,8 +53,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
