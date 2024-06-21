@@ -142,11 +142,11 @@ export const userLogin = async (req, res) => {
       //     domain: 'reimagined-fishstick-sigma.vercel.app',
       //     path: '/' // Ensure this matches your application route structure
       // });
-      res.setHeader('Set-Cookie', [
-        `jwt=${refreshToken}; Secure; HttpOnly;`,
-    ]);
-    res.setHeader("Access-Control-Allow-Credentials","true");
-res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
+    //   res.setHeader('Set-Cookie', [
+    //     `jwt=${refreshToken}; Secure; HttpOnly;`,
+    // ]);
+    // res.setHeader("Access-Control-Allow-Credentials","true");
+res.status(200).json({ message: "User login successfully done", accessToken:accessToken,refreshToken:refreshToken });
       } else {
         res.status(400).json({ error: "Invalid password" });
       }
