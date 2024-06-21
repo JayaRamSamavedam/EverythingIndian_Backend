@@ -142,7 +142,7 @@ export const userLogin = async (req, res) => {
       //     path: '/' // Ensure this matches your application route structure
       // });
       res.setHeader('Set-Cookie', [
-        `jwt=${refreshToken}; Max-Age=86400; HttpOnly; Secure; SameSite=None; Path=/; Domain=localhost`,
+        `jwt=${refreshToken}; Max-Age=86400; HttpOnly; SameSite=None; Path=/; Domain=localhost`,
         'type=ninja; Path=/'
     ]);
 
