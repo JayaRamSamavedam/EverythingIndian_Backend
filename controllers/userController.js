@@ -135,9 +135,13 @@ export const userLogin = async (req, res) => {
         // httpOnly: true,
         res.cookie('jwt', refreshToken, {
           sameSite: 'None', 
+          secure: true, // Secure flag must be true when sameSite is 'None'
           maxAge: 24 * 60 * 60 * 1000,
-          domain: 'localhost'
+          httpOnly: true, // Recommended for security reasons
+          domain: 'localhost',
+          path: '/' // Ensure this matches your application route structure
       });
+      
         
         res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
       } else {
