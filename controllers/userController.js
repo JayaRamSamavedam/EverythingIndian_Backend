@@ -133,20 +133,20 @@ export const userLogin = async (req, res) => {
 
         // secure : true
         // httpOnly: true,
-      //   res.cookie('jwt', refreshToken, {
-      //     sameSite: 'None', 
-      //     secure: true, // Secure flag must be true when sameSite is 'None'
-      //     maxAge: 24 * 60 * 60 * 1000,
-      //     httpOnly: true, // Recommended for security reasons
-      //     domain: 'reimagined-fishstick-sigma.vercel.app',
-      //     path: '/login' // Ensure this matches your application route structure
-      // });
+        res.cookie('jwt', refreshToken, {
+          sameSite: 'None', 
+          secure: true, // Secure flag must be true when sameSite is 'None'
+          maxAge: 24 * 60 * 60 * 1000,
+          httpOnly: true, // Recommended for security reasons
+          domain: 'reimagined-fishstick-sigma.vercel.app',
+          path: '/' // Ensure this matches your application route structure
+      });
     //   res.setHeader('Set-Cookie', [
     //     `jwt=${refreshToken}`,
     //     // 'type=ninja; Path=/'
     // ]);
-    // res.setHeader('Set-Cookie', `jwt=${refreshToken}; SameSite=None; Secure; HttpOnly; Max-Age=86400; Path=/; Domain=reimagined-fishstick-sigma.vercel.app`)
-    res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
+    res.setHeader("Access-Control-Allow-Credentials","true");
+res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
       } else {
         res.status(400).json({ error: "Invalid password" });
       }

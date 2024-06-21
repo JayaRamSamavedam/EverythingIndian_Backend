@@ -9,7 +9,7 @@ import users from "../schema/userSchema.js"
 // const { findOne } = require("../schema/roleCounterSchema");
 const verifyAuthToken = async (req, res, next) => {
   try {
-    console.log(res.cookies);
+    console.log("cookies",req.cookies);
     const authHeader = req.headers.authorization;
     console.log("hello\n")
     console.log(authHeader);
