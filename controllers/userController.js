@@ -132,8 +132,9 @@ export const userLogin = async (req, res) => {
         const accessToken = tokens.accessToken;
 
         res.cookie('jwt', refreshToken, {
-          // httpOnly: true,
-          // sameSite: 'None', secure: true,
+          httpOnly: true,
+          sameSite: 'None', 
+          secure: true,
           maxAge: 24 * 60 * 60 * 1000,
           domain: 'localhost'
       });
@@ -411,6 +412,7 @@ export const verifyToken = async (req,res)=>{
     if(user){
     return res.status(200).json({message:"token verified"});
   }
+  else{ return res.status(400)}
     }
   }
   catch(e){

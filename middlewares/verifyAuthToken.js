@@ -11,12 +11,14 @@ const verifyAuthToken = async (req, res, next) => {
   try {
     // console.log(res.cookies);
     const authHeader = req.headers.authorization;
+    console.log("hello\n")
     console.log(authHeader);
     const token = authHeader && authHeader.split(' ')[1]; // Extract token from 'Bearer <token>' format
 
     if (!token) {
       return res.status(401).send({ error: "Unauthorized: Missing access token" });
     }
+    console.log("token\n")
     console.log(token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
      // Verify token using secret key
