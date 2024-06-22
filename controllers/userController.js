@@ -114,6 +114,7 @@ export const userOtpSend = async (req, res) => {
 };
 
 export const userLogin = async (req, res) => {
+  console.log("clearCookie",req.cookies.jwt===undefined)
   const { email, password } = req.body;
   console.log("I am invoked");
   console.log(email,password)
@@ -146,7 +147,7 @@ export const userLogin = async (req, res) => {
     //     `jwt=${refreshToken}; Secure; HttpOnly;`,
     // ]);
     res.setHeader("Access-Control-Allow-Credentials","true");
-res.status(200).json({ message: "User login successfully done", accessToken:accessToken,refreshToken:refreshToken });
+res.status(200).json({ message: "User login successfully done", accessToken:accessToken });
       } else {
         res.status(400).json({ error: "Invalid password" });
       }
@@ -204,11 +205,18 @@ export const logout = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "Invalid refresh token" });
     }
-    user.tokens = user.tokens.filter(token => token.token !== refreshToken);
-    // user.tokens = [];
-    user.accessToken=user.accessToken.filter(accessToken => accessToken.token !== req.token);
+    // user.tokens = user.tokens.filter(token => token.token !== refreshToken);
+    user.tokens = [];
+    // user.accessToken=user.accessToken.filter(accessToken => accessToken.token !== req.token);
+    user.accessToken =[];
     await user.save();
-
+    res.clearCookie('jwt',{
+      sameSite: 'None',
+      secure: true,
+      maxAge: 0,
+      httpOnly: true, 
+      path: '/'})
+      console.log(res.cookie.jwt)
     res.status(200).json({ message: "Logout successful" });
     // res.clearCookie('jwt');
   } catch (error) {
@@ -233,9 +241,6 @@ export const changePassword = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
-
-    // console.log("Old password from request:", oldPassword);
-    // console.log("Hashed password from database:", user.password);
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
 
@@ -263,7 +268,6 @@ export const changePassword = async (req, res) => {
   
   export const forgotPassword = async (req, res) => {
     const { email } = req.body;
-  
     if (!email) {
       return res.status(400).json({ error: "Please provide your email" });
     }
@@ -369,12 +373,12 @@ export const verifyOtp = async (req, res) => {
       // Update phone number
       user.uname = newuname;
       await user.save();
-  
       res.status(200).json({ message: "uname changed successfully" });
     } catch (error) {
       res.status(400).json({ error: "Invalid details", details: error });
     }
   }
+
 export const resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
@@ -420,8 +424,43 @@ export const verifyToken = async (req,res)=>{
   }
   else{ return res.status(400)}
     }
+    else{
+      res.status(400);
+    }
   }
   catch(e){
     return res.status(500).json({error:"invalid token"});
   }
+};
+
+
+export const verifyRefreshToken = async (req,res)=>{
+  console.log(req.cookies.jwt)
+  if (req.cookies.jwt) {
+    const refreshToken = req.cookies.jwt;
+    console.log(refreshToken)
+    console.log(typeof(refreshToken))
+  if (!refreshToken) {
+    return res.status(400).json({ error: "Please provide a refresh token" });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
+    const user = await users.findOne({ _id: decoded._id, 'tokens.token': refreshToken });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid refresh token" });
+    }
+    if(user){
+    return res.status(200).json({message:"token verified"});
+    }
+    else{ return res.status(400)}
+  }
+  catch(e){
+    return res.status(500).json({error:"invalid token"});
+  }
+}
+else{
+  return res.status(400).json("no token present");
+}
+  
 };
