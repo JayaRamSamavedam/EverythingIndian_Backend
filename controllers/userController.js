@@ -23,9 +23,9 @@ const transporter = nodemailer.createTransport({
 
 
 export const userRegister = async (req, res) => {
-  const { uname, email, phonenumber, password } = req.body;
+  const { fullName, email, phonenumber, password,birthday,region,gender} = req.body;
 
-  if (!uname || !email || !password || !phonenumber) {
+  if (!fullName || !email || !password || !phonenumber) {
     return res.status(400).json({ error: "Please enter all the inputs" });
   }
 
@@ -34,7 +34,7 @@ export const userRegister = async (req, res) => {
     if (preuser) {
       return res.status(400).json({ error: "This user already exists in our organization" });
     } else {
-      const userregister = new users({ uname, email, phonenumber, password,userGroup:"customer" });
+      const userregister = new users({ fullName, email, phonenumber, password,userGroup:"customer",birthday,gender,region });
       const storedata = await userregister.save();
       res.status(200).json(storedata);
     }
@@ -176,6 +176,9 @@ export const refreshToken = async (req, res) => {
     }
 
     const accessToken = jwt.sign({ _id: user._id.toString() }, SECRECT_KEY, { expiresIn: '15m' });
+    user.accessToken.push({ token: accessToken });
+    await user.save();
+    // accessToken.concat({token:accessToken})
     res.status(200).json({ accessToken });
   } catch (error) {
 
@@ -185,6 +188,28 @@ export const refreshToken = async (req, res) => {
 else{
   res.status(400).json({error:"please login again ivalid token"});
 }
+};
+
+
+export const hasValidRefreshToken = async (req, res) => {
+  let token = false;
+console.log(req.cookies)
+  if (req.cookies.jwt) {
+    const refreshToken = req.cookies.jwt;
+
+    try {
+      const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
+      const user = await users.findOne({ _id: decoded._id, 'tokens.token': refreshToken });
+
+      if (user) {
+        token = true;
+      }
+    } catch (error) {
+      token = false;
+    }
+  }
+
+  return res.status(200).json({ token });
 };
 
 export const logout = async (req, res) => {
@@ -371,9 +396,9 @@ export const verifyOtp = async (req, res) => {
       }
   
       // Update phone number
-      user.uname = newuname;
+      user.fullName = newuname;
       await user.save();
-      res.status(200).json({ message: "uname changed successfully" });
+      res.status(200).json({ message: "fullName changed successfully" });
     } catch (error) {
       res.status(400).json({ error: "Invalid details", details: error });
     }
@@ -422,7 +447,9 @@ export const verifyToken = async (req,res)=>{
     if(user){
     return res.status(200).json({message:"token verified"});
   }
-  else{ return res.status(400)}
+  else{
+     return res.status(400);
+    }
     }
     else{
       res.status(400);
@@ -435,7 +462,7 @@ export const verifyToken = async (req,res)=>{
 
 
 export const verifyRefreshToken = async (req,res)=>{
-  console.log(req.cookies.jwt)
+  // console.log(req.cookies.jwt)
   if (req.cookies.jwt) {
     const refreshToken = req.cookies.jwt;
     console.log(refreshToken)
@@ -443,7 +470,7 @@ export const verifyRefreshToken = async (req,res)=>{
   if (!refreshToken) {
     return res.status(400).json({ error: "Please provide a refresh token" });
   }
-
+ 
   try {
     const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
     const user = await users.findOne({ _id: decoded._id, 'tokens.token': refreshToken });

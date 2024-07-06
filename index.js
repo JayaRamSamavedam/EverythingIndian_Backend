@@ -39,7 +39,7 @@ app.use(helmet.xssFilter());
 // Rate limiting to prevent brute force attacks
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000000, // limit each IP to 100 requests per windowMs
+    max: 100, // limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again later.',
 });
 
@@ -47,7 +47,7 @@ app.use(limiter);
 
 // CORS configuration
 const corsOptions = {
-    origin:["https://reimagined-fishstick-sigma.vercel.app","http://localhost:3000"], // specify your allowed origins
+    origin:["https://reimagined-fishstick-sigma.vercel.app","http://localhost:5000","http://localhost:5173"], // specify your allowed origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 };

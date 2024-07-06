@@ -1,7 +1,7 @@
-import Order from './orderSchema.js';
-import Cart from './cartSchema.js';
-import Product from './productSchema.js';
-import User from './userSchema.js';
+import Order from '../schema/ordersSchema.js';
+import Cart from '../schema/cartSchema.js';
+import Product from '../schema/productSchema.js';
+import User from '../schema/userSchema.js';
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 
@@ -120,7 +120,7 @@ export const orderBill = async (req, res) => {
       doc.text(`Product ID: ${item.productId.productId}`);
       doc.text(`Product Name: ${item.productId.name}`);
       doc.text(`Quantity: ${item.quantity}`);
-      doc.text(`Price: $${item.price.toFixed(2)}`);
+      doc.text(`Price: $${(item.price *req.Currency).toFixed(2)}`);
       doc.moveDown();
     });
 
@@ -150,3 +150,66 @@ export const orderBill = async (req, res) => {
 };
 
 // export default router;
+
+export const getAllOrders = async (req,res)=>{
+  try{
+    const orders = await Order.find();
+    if(!orders){
+      return res.status(400).json({error:"orders not found"});
+    }
+    const updatedOrders = orders.map(order => {
+      const updatedOrder = order.toObject();
+      updatedOrder.items = updatedOrder.items.map(item => {
+          item.price = item.price * req.Currency;
+          return item;
+      });
+      updatedOrder.totalAmount = updatedOrder.items.reduce((total, item) => total + item.price, 0);
+      return updatedOrder;
+  });
+
+    return res.status(200).json(updatedOrders);
+  }
+  catch{
+    return res.status(500).json(error);
+  }
+};
+
+
+export const updateOrderStatus = async(req,res) =>{
+  const orderId = req.params.orderId;
+  const {orderStatus,orderStatusMessage} = req.body;
+  const updates = {}
+  if(orderStatus){
+    updates[orderStatus] = orderStatus;
+  }
+  if(orderStatusMessage){
+    updates[orderStatusMessage] = orderStatusMessage;
+  }
+  if(!orderId){
+    return res.status(400).json({error:"order not found"});
+  }
+  try{
+    const order= await Order.findByIdAndUpdate({orderId},updates);
+    if(!order){
+      return res.status(400).json({error:"orderid not found"});
+    }
+    return res.status(200).json({message:"order status sucessfully updated"});
+  }
+  catch(error){
+    return res.status(500).json(error);
+  }
+}
+
+export const deleteOrder = async (req,res)=>{
+  const orderId = req.params;
+  if(!orderId){
+    return res.status(400).json({error:"orderid not found"})
+  }
+  try{
+    const order = await Order.findByIdAndDelete(orderId);
+    return res.status(200).json({message:"deleted the order sucessfully"});
+  }
+  catch(error){
+    return res.status(500).json(error);
+  }
+}

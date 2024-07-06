@@ -7,9 +7,7 @@ export const addToCart = async (req, res) => {
   if (!productId) {
     return res.status(400).json({ error: "Please provide valid ProductID" });
   }
-  if (!quantity || quantity <= 0) {
-    quantity = 1; // Set default quantity to 1 if not provided or invalid
-  }
+  
 
   try {
     let cart = await Cart.findOne({ user: req.user.email });
@@ -26,6 +24,9 @@ export const addToCart = async (req, res) => {
     } else {
       // Product not in cart, add new item
       const product = await Product.findOne({ productId: productId }); // Use _id or unique identifier
+      if (!quantity || quantity <= 0) {
+        quantity = product.quantity; // Set default quantity to 1 if not provided or invalid
+      }
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
@@ -55,10 +56,11 @@ export const increment = async (req, res) => {
         return res.status(400).json({ error: "Invalid cartID" });
       }
 
-      console.log(cart.items)
+      // console.log(cart.items)
       const productIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString());
+      const product = await Product.findOne({productId:productId});
       if (productIndex > -1) {
-        cart.items[productIndex].quantity += 1;
+        cart.items[productIndex].quantity +=product.quantity;
         await cart.save();
         return res.status(200).json(cart);
       } else {
@@ -76,7 +78,6 @@ export const increment = async (req, res) => {
     if ( !productId) {
       return res.status(400).json({ error: "Please provide  productId to increment" });
     }
-  
     try {
       const cart = await Cart.findOne({user:req.user.email});
       if (!cart) {
@@ -85,8 +86,9 @@ export const increment = async (req, res) => {
 
       // console.log(cart.items)
       const productIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString());
-        if (productIndex > -1) {
-        cart.items[productIndex].quantity -= 1;
+      const product = await Product.findOne({productId:productId});  
+      if (productIndex > -1) {
+        cart.items[productIndex].quantity -= product.quantity;
         if (cart.items[productIndex].quantity <= 0) {
           cart.items.splice(productIndex, 1); // Remove the product if quantity goes to zero
         }
@@ -166,7 +168,6 @@ export const increment = async (req, res) => {
           products.push(productDetails);
         }
       }
-  
       return res.status(200).json({ products, totalCost });
     } catch (e) {
       console.error('Error getting cart details:', e);

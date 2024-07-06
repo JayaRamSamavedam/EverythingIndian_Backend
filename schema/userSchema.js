@@ -8,7 +8,7 @@ const SECRECT_KEY = process.env.JWT_SECRET;
 const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET; 
 
 const userSchema = new mongoose.Schema({
-  uname: {
+  fullName: {
     type: String,
     required: true,
     trim: true,
@@ -38,6 +38,18 @@ const userSchema = new mongoose.Schema({
       },
       message: "Not a valid mobile number"
     }
+  },
+  birthday:{
+    type:Date,
+    required:false,
+  },
+  region:{
+    type:String,
+    required:false,
+  },
+  gender:{
+    type:String,
+    required:false,
   },
   userGroup:{
     type:String,

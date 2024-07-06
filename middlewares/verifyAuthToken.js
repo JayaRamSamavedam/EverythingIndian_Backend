@@ -14,7 +14,6 @@ const verifyAuthToken = async (req, res, next) => {
     console.log("hello\n")
     console.log(authHeader);
     const token = authHeader && authHeader.split(' ')[1]; // Extract token from 'Bearer <token>' format
-
     if (!token) {
       return res.status(401).send({ error: "Unauthorized: Missing access token" });
     }

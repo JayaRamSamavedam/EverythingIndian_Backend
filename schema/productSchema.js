@@ -2,8 +2,18 @@ import mongoose from 'mongoose';
 import Counter from './productCounterSchema.js';
 import ItemType from './itemtypeSchema.js';
 import Category from './categorySchema.js';
-
+import { noSniff } from 'helmet';
+import Brand from './brandSchema.js';
+import SubcategorySchema from './subcategorySchema.js';
 const productSchema = new mongoose.Schema({
+  brandname:{
+    type:String,
+    unique:true,
+  },
+  priority:{
+    type:Number,
+    default:0,
+  },
   productId: {
     type: Number,
     unique: true, // Ensure unique product IDs
@@ -43,22 +53,23 @@ const productSchema = new mongoose.Schema({
       return this.price - (this.price * this.discount / 100);
     },
   },
+  quantity:{
+    type:Number,
+    required:true,
+  },
   itemType: {
     type: String,
     required: true,
   },
-  rating: {
-    type: Number,
-    required: true,
-    default: 0,
+  subcategories:{
+    type:[String],
+    required:false,
   },
-  numRatings: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-  // reviews
-});
+  hotDeals:{
+    type:Boolean,
+    default:false,
+  }
+},{timestamps:true});
 
 productSchema.pre('save', async function (next) {
   const product = this;
@@ -74,12 +85,35 @@ productSchema.pre('save', async function (next) {
     if (!ite) {
       throw new Error("Item Type is invalid");
     }
+    const brand = await Brand.findOne({name:product.brandname});
+    if(!brand){
+      throw new Error("brand is invalid");
+    }
+    // const subcat = await SubcategorySchema.find({category:product.category});
+    if (product.subcategories.length !== 0) {
+      try {
+        const subcat = await SubcategorySchema.find({ category: product.category });
+        const subcatNames = subcat.map(item => item.name); // Assuming 'name' is the field containing the subcategory string
+    
+        const allStringsPresent = product.subcategories.every(str => subcatNames.includes(str));
+    
+        if (allStringsPresent) {
+          console.log('All strings are present in the subcategories.');
+        } else {
+          console.log('Not all strings are present in the subcategories.');
+        }
+      } catch (error) {
+        console.error('Error fetching subcategories:', error);
+      }
+    } else {
+      console.log('No subcategories to check.');
+    }
+
     const counter = await Counter.findOneAndUpdate(
       { _id: 'productId' }, 
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
     );
-
     product.productId = counter.seq;
     next();
   } catch (error) {

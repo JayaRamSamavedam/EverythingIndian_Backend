@@ -158,4 +158,3 @@ export const updateusergrp = async (req, res) => {
     return res.status(500).json({ error: 'Error updating user group', details: error.message });
   }
 };
-

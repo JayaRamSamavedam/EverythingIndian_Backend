@@ -11,9 +11,10 @@ const router = express.Router();
 
 // register 
 router.post("/user/register",controllers.userRegister);
-
+router.get("/user/validRefresh",controllers.hasValidRefreshToken);
 //login
 router.post("/user/login",controllers.userLogin);
+
 
 //refreshtoken
 router.post("/user/refresh",controllers.refreshToken);
