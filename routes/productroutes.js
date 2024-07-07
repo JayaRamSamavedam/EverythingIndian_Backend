@@ -13,7 +13,7 @@ router.get("/prod/get",verifyAuthToken,checkRoleAccess,controller.getAllProducts
 router.get("/prod/getByID/:id",verifyAuthToken,checkRoleAccess,currencyHandler,controller.getProductById);
 router.get("/prod",controller.fetchProducts);
 router.get("/admin/getAllItemTypes",verifyAuthToken,checkRoleAccess,controller.getAllItemTypes);
-router.get("/admin/getAllCategories",verifyAuthToken,checkRoleAccess,controller.getAllCategories);
+router.get("/prod/getAllCategories",verifyAuthToken,checkRoleAccess,controller.getAllCategories);
 router.post("/prod/create-review",verifyAuthToken,checkRoleAccess,controller.createReview);
 router.post("/prod/delete-review",verifyAuthToken,checkRoleAccess,controller.deleteReview);
 router.post("/prod/delete-comment",verifyAuthToken,checkRoleAccess,controller.deleteComment);
