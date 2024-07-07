@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 const currencyHandler = async (req, res, next) => {
+    console.log(req.headers);
     const basecode = 'INR';
     let changecode = 'INR';
 
-    if (req.headers.Currency) {
-        changecode = req.headers.Currency;
+    if (req.headers.currency) {
+        changecode = req.headers.currency;
+        console.log(changecode)
     }
     
     try {

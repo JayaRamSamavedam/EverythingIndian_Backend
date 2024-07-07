@@ -68,6 +68,10 @@ const productSchema = new mongoose.Schema({
   hotDeals:{
     type:Boolean,
     default:false,
+  },
+  rating:{
+    type:Number,
+    default:5,
   }
 },{timestamps:true});
 

@@ -10,10 +10,10 @@ router.post("/admin/prod/cat",verifyAuthToken,checkRoleAccess,controller.createC
 router.post("/admin/prod/item",verifyAuthToken,checkRoleAccess,controller.createItemType);
 router.post ("/admin/prod/create",verifyAuthToken,checkRoleAccess,controller.createProduct);
 router.get("/prod/get",verifyAuthToken,checkRoleAccess,controller.getAllProducts);
-router.get("/prod/getByID/:id",verifyAuthToken,checkRoleAccess,currencyHandler,controller.getProductById);
+router.get("/prod/getByID/:id",currencyHandler,controller.getProductById);
 router.get("/prod",controller.fetchProducts);
 router.get("/admin/getAllItemTypes",verifyAuthToken,checkRoleAccess,controller.getAllItemTypes);
-router.get("/prod/getAllCategories",verifyAuthToken,checkRoleAccess,controller.getAllCategories);
+router.get("/prod/getAllCategories",controller.getAllCategories);
 router.post("/prod/create-review",verifyAuthToken,checkRoleAccess,controller.createReview);
 router.post("/prod/delete-review",verifyAuthToken,checkRoleAccess,controller.deleteReview);
 router.post("/prod/delete-comment",verifyAuthToken,checkRoleAccess,controller.deleteComment);
@@ -22,7 +22,7 @@ router.get("/prod/getByProduct/:productId",verifyAuthToken,controller.getReviews
 router.post("/prod/editComment",verifyAuthToken,checkRoleAccess,controller.editComment);
 router.delete("/admin/prod/delete/:id",verifyAuthToken,checkRoleAccess,controller.deleteProductByID);
 // productswithhotdeal
-router.get("/prod/gethotdeals",controller.productsWithHotdeal);
+router.get("/prod/gethotdeals",currencyHandler,controller.productsWithHotdeal);
 // getallsubcategories
 router.get("/prod/getsubcategories",controller.getAllSubCategories);
 // deletesubcategories
@@ -66,4 +66,6 @@ router.get("/prod/getBrand/:name",verifyAuthToken,checkRoleAccess,controller.get
 
 router.get("/admin/getCategory/:name",verifyAuthToken,checkRoleAccess,controller.getCategory);
 router.get("/admin/getSubcatbycat/:category",verifyAuthToken,checkRoleAccess,controller.getSubCategoryByCategory);
+
+router.get("/prod/getProductsByCategory/:cate",currencyHandler,controller.getProductsByCategory);
 export default router;

@@ -11,6 +11,7 @@ import RecentlyViewed from '../schema/recentlyViewedSchema.js';
 import BrandSponser from '../schema/BrandSponsersSchema.js';
 import Brand from '../schema/brandSchema.js';
 import Subcategory from '../schema/subcategorySchema.js';
+// import Category from '../schema/categorySchema.js';
 // import Product from '../schema/productSchema.js';
 
 
@@ -876,7 +877,7 @@ export const productsWithHotdeal = async (req,res)=>{
       updatedProduct.price = updatedProduct.price * req.Currency;
       return updatedProduct;
   });
-  return res.status(200).json({updatedProducts})
+  return res.status(200).json(updatedProducts)
   }
   catch(error){
     return res.json({error});
@@ -960,5 +961,27 @@ export const getSubCategoryByCategory = async(req,res)=>{
   }
   catch(Error){
     return res.json({error:Error.message});
+  }
+}
+
+export const getProductsByCategory = async(req,res)=>{
+  let {cate} = req.params;
+  if(!cate){
+    return res.json({"error":"category not found"});
+  }
+  try{
+    const cat = await Category.findOne({name:cate});
+    if(!cat){ return res.json({error:"category not found"});}
+    const products = await Product.find({category:cat.name});
+    
+      const updatedProducts = products.map(product => {
+        const updatedProduct = product.toObject();
+        updatedProduct.price = updatedProduct.price * req.Currency;
+        return updatedProduct;
+    });
+    return res.json(updatedProducts);
+  }
+  catch(error){
+    return res.json({"error":error});
   }
 }
