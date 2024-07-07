@@ -2,7 +2,7 @@ import express from 'express';
 import verifyAuthToken from '../middlewares/verifyAuthToken.js';
 import  checkRoleAccess from '../middlewares/checkroleaccess.js';
 import * as controller from '../controllers/productController.js';
-
+import currencyHandler from '../middlewares/currencyHandler.js';
 const router = express.Router();
 
 router.put("/admin/prod/edit/:id",verifyAuthToken,checkRoleAccess,controller.editProduct);
@@ -10,7 +10,7 @@ router.post("/admin/prod/cat",verifyAuthToken,checkRoleAccess,controller.createC
 router.post("/admin/prod/item",verifyAuthToken,checkRoleAccess,controller.createItemType);
 router.post ("/admin/prod/create",verifyAuthToken,checkRoleAccess,controller.createProduct);
 router.get("/prod/get",verifyAuthToken,checkRoleAccess,controller.getAllProducts);
-router.get("/prod/getByID/:id",verifyAuthToken,checkRoleAccess,controller.getProductById);
+router.get("/prod/getByID/:id",verifyAuthToken,checkRoleAccess,currencyHandler,controller.getProductById);
 router.get("/prod",controller.fetchProducts);
 router.get("/admin/getAllItemTypes",verifyAuthToken,checkRoleAccess,controller.getAllItemTypes);
 router.get("/admin/getAllCategories",verifyAuthToken,checkRoleAccess,controller.getAllCategories);
@@ -24,7 +24,7 @@ router.delete("/admin/prod/delete/:id",verifyAuthToken,checkRoleAccess,controlle
 // productswithhotdeal
 router.get("/prod/gethotdeals",controller.productsWithHotdeal);
 // getallsubcategories
-router.get("/prod/getsubcategoris",controller.getAllSubCategories);
+router.get("/prod/getsubcategories",controller.getAllSubCategories);
 // deletesubcategories
 router.delete("/admin/prod/deletesubcat",verifyAuthToken,checkRoleAccess,controller.deletedsubcategories)
 // editsubcategories
@@ -65,4 +65,5 @@ router.delete("/admin/prod/deleteCategory",verifyAuthToken,checkRoleAccess,contr
 router.get("/prod/getBrand/:name",verifyAuthToken,checkRoleAccess,controller.getBrandByName);
 
 router.get("/admin/getCategory/:name",verifyAuthToken,checkRoleAccess,controller.getCategory);
+router.get("/admin/getSubcatbycat/:category",verifyAuthToken,checkRoleAccess,controller.getSubCategoryByCategory);
 export default router;

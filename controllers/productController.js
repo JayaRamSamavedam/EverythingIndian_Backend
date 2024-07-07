@@ -96,21 +96,10 @@ export const createItemType = async (req, res) => {
 
 export const createProduct = async (req, res) => {
 // console.log(req);
-  const { name, coverImage, images,category,description, price, discount, itemType ,quantity} = req.body;
+  const { name, coverImage, images,category,description,subcategories, price, discount, itemType ,quantity,brandname} = req.body;
   try {
     
     // Find category and item type
-    console.log(category)
-    const cat = await Category.findOne({ name: category });
-    const ite = await ItemType.findOne({ name: itemType });
-
-    // Validate category and item type
-    if (!cat) {
-      return res.status(400).json({ error: 'Invalid category' });
-    }
-    if (!ite) {
-      return res.status(400).json({ error: 'Invalid item type' });
-    }
 
     // Create new product
     const newProduct = new Product({
@@ -123,7 +112,10 @@ export const createProduct = async (req, res) => {
       discount:discount,
       discountedPrice: price - (price * discount / 100),
       itemType: itemType,
-      quantity:quantity
+      quantity:quantity,
+      brandname:brandname,
+      subcategories:subcategories
+
     });
     const savedProduct = await newProduct.save();
     return res.status(201).json(savedProduct);
@@ -196,7 +188,7 @@ export const getAllCategories  = async (req,res)=>{
 }
 export const editProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, category,description, price, discount, itemType, imagesToDelete, newImages, coverImage ,quantity,brandname,priority,newsubcategories,deletedsubcategories} = req.body;
+  const { name, category,description, price, discount, itemType, imagesToDelete, newImages, coverImage ,quantity,brandname,priority,subcategories} = req.body;
   try {
     // Find the product by ID
     const product = await Product.findOne({ productId: Number(id) });
@@ -248,12 +240,12 @@ export const editProduct = async (req, res) => {
       updates.images = product.images.filter(image => !imagesToDelete.includes(image));
     }
 
-    if(deletedsubcategories && deletedsubcategories.length > 0){
-      updates.subcategories = product.subcategories.filter(subcategory => !deletedsubcategories.includes(subcategory));
-    }
-    if(newsubcategories && newsubcategories.length > 0){
-      updates.subcategories = [...product.subcategories,...newsubcategories];
-    }
+    if(subcategories){
+      updates.subcategories = subcategories
+     }
+    // if(newsubcategories && newsubcategories.length > 0){
+    //   updates.subcategories = [...product.subcategories,...newsubcategories];
+    // }
     // Upload new images if any and add to the product's image array
     if (newImages && newImages.length > 0) {
       // Assuming newImages are URLs or identifiers for new images
@@ -833,7 +825,7 @@ export const creatSubcategory = async (req,res)=>{
 
 // update
 export const editSubcategory = async (req,res)=>{
-  const {oldname,newname,proimage,discount,category}=req.body;
+  let {oldname,newname,proimage,discount,category}=req.body;
   try{
     const updates={}
     if(proimage) updates.proimage = proimage;
@@ -841,10 +833,10 @@ export const editSubcategory = async (req,res)=>{
     if(category) updates.category = category;
     if(oldname && newname){
       await Subcategory.updateSubcategoryName(oldname,newname);
+      oldname=newname;
       const sub = await Subcategory.findOneAndUpdate({name:newname},updates);
     }
-    
-    const sub = await Subcategory.findOneAndUpdate({name:oldname},updates);
+    const sub = await Subcategory.findOneAndUpdate({name:newname},updates);
     return res.status(200).json({message:"subcategory changed sucessfully"});
   }
   catch(error){
@@ -956,5 +948,17 @@ export const getBrandByName = async(req,res)=>{
   }
   catch{
     return res.json({error:"catched error"});
+  }
+}
+
+export const getSubCategoryByCategory = async(req,res)=>{
+  const {category} = req.params;
+  if(!category) return res.json({error:"category not found"});
+  try{
+    const subcategories = await Subcategory.find({category:category});
+    return res.json(subcategories);
+  }
+  catch(Error){
+    return res.json({error:Error.message});
   }
 }
