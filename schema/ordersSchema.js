@@ -90,7 +90,7 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-});
+},{timestamps:true});
 
 orderSchema.pre('save', async function (next) {
   try {
@@ -110,5 +110,22 @@ orderSchema.pre('save', async function (next) {
     next(error);
   }
 });
+orderSchema.statics.getUniqueProductsPurchasedByUser = async function (userId) {
+  try {
+    const orders = await this.find({ user: userId });
+    const productIds = new Set();
+
+    orders.forEach(order => {
+      order.items.forEach(item => {
+        productIds.add(item.productId);
+      });
+    });
+
+    const uniqueProducts = await Product.find({ productId: { $in: Array.from(productIds) } });
+    return uniqueProducts;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 const Order = mongoose.model('Order', orderSchema);
 export default Order;

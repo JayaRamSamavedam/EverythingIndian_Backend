@@ -29,7 +29,7 @@ const recentlyViewedSchema = new mongoose.Schema({
 recentlyViewedSchema.statics.createOrUpdate = async function(email, productInfo) {
     try {
         const product = {
-            productId: productInfo._id || productInfo.id, // Assuming the product info contains _id or id field
+            productId: productInfo.productId || productInfo._id, // Assuming the product info contains _id or id field
             viewedAt: new Date()
         };
         const record = await this.findOneAndUpdate(

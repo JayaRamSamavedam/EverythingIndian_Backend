@@ -68,4 +68,7 @@ router.get("/admin/getCategory/:name",verifyAuthToken,checkRoleAccess,controller
 router.get("/admin/getSubcatbycat/:category",verifyAuthToken,checkRoleAccess,controller.getSubCategoryByCategory);
 
 router.get("/prod/getProductsByCategory/:cate",currencyHandler,controller.getProductsByCategory);
+router.post("/prod/addAndRemoveFav/:productId",verifyAuthToken,checkRoleAccess,controller.AddAndRemoveFavourites);
+router.get("/prod/getFavourites",verifyAuthToken,checkRoleAccess,currencyHandler,controller.FavouriteProducts);
+
 export default router;

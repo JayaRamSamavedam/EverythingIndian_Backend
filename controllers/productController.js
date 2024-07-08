@@ -11,6 +11,7 @@ import RecentlyViewed from '../schema/recentlyViewedSchema.js';
 import BrandSponser from '../schema/BrandSponsersSchema.js';
 import Brand from '../schema/brandSchema.js';
 import Subcategory from '../schema/subcategorySchema.js';
+import Favourites from '../schema/favouritesSchema.js';
 // import Category from '../schema/categorySchema.js';
 // import Product from '../schema/productSchema.js';
 
@@ -41,6 +42,8 @@ export const setPriorityByBrand = async (req, res) => {
 
     const products = await Product.find({ brandname: brandname });
     const updatedProducts = await Promise.all(products.map(async product => {
+      
+      
       product.priority = priority;
       await product.save();
       return product;
@@ -985,3 +988,38 @@ export const getProductsByCategory = async(req,res)=>{
     return res.json({"error":error});
   }
 }
+
+export const AddAndRemoveFavourites = async(req,res)=>{
+  const {productId} = req.params;
+  if(!productId)return res.json({error:"product Id not found"});
+  try{
+    await Favourites.AddAndRemoveFavourites(req.user.email,productId);
+  }
+  catch(error){
+    return res.status(500).json(error);
+  }
+}
+
+
+
+export const FavouriteProducts = async (req, res) => {
+  try {
+      const fav = await Favourites.findOne({ email: req.user.email });
+      if (!fav || !fav.products.length) {
+          return res.status(404).json({ message: "No favourite products found" });
+      }
+
+      // Fetch the product details for each product ID in the favourites
+      const products = await Promise.all(fav.products.map(async (productId) => {
+          const product = await Product.findById(productId);
+          const updatedProduct = product.toObject();
+          updatedProduct.price = updatedProduct.price * req.Currency;
+          return updatedProduct;
+      }));
+
+
+      res.status(200).json( products );
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
