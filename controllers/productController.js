@@ -119,7 +119,6 @@ export const createProduct = async (req, res) => {
       quantity:quantity,
       brandname:brandname,
       subcategories:subcategories
-
     });
     const savedProduct = await newProduct.save();
     return res.status(201).json(savedProduct);
@@ -161,22 +160,28 @@ export const getAllBrands = async (req,res)=>{
   }
 }
 export const getProductsByBrand = async(req,res)=>{
-  const {brandname} = req.body;
+  // console.log(req.body)
+  const {brandname} = req.params;
+  console.log(brandname)
+  // console.log(brandname)
   try{
     const brand = await Brand.findOne({name:brandname});
+    console.log(brand)
     if(!brand){
       return res.json({error:"brand not found"});
     }
-    const products = Product.find({brandname:brandname});
+    const products = await Product.find({brandname:brandname});
+    console.log(products)
     const updatedProducts = products.map(product => {
       const updatedProduct = product.toObject();
       updatedProduct.price = updatedProduct.price * req.Currency;
       return updatedProduct;
   });
-  return res.status(200).json({updatedProducts});
+  console.log(updatedProducts)
+  return res.status(200).json(updatedProducts);
   }
   catch(error){
-    return res.status(500).json({error:error});
+    return res.json({error:error});
   }
 }
 
@@ -812,13 +817,13 @@ export const editCategory = async (req, res) => {
 
 // create
 export const creatSubcategory = async (req,res)=>{
-  const {category,name,proimage,discount}=req.body;
+  const {category,name,proImage,discount}=req.body;
 
   try{
     if(!discount){
       discount=0;
     }
-    const sub = new Subcategory({category,name,proimage,discount});
+    const sub = new Subcategory({category,name,proImage,discount});
     const savesub = await sub.save();
     return res.status(200).json(savesub);
   }
@@ -991,12 +996,18 @@ export const getProductsByCategory = async(req,res)=>{
 
 export const AddAndRemoveFavourites = async(req,res)=>{
   const {productId} = req.params;
+  console.log("Hellow major")
   if(!productId)return res.json({error:"product Id not found"});
   try{
-    await Favourites.AddAndRemoveFavourites(req.user.email,productId);
+    console.log("hello surya");
+   let message =  await Favourites.AddandDelete(req.user.email,productId);
+   console.log(message);
+   console.log("hello surya")
+   return res.json({message:message})
+
   }
   catch(error){
-    return res.status(500).json(error);
+    return res.status(500).json({"error":error.message});
   }
 }
 
@@ -1011,7 +1022,7 @@ export const FavouriteProducts = async (req, res) => {
 
       // Fetch the product details for each product ID in the favourites
       const products = await Promise.all(fav.products.map(async (productId) => {
-          const product = await Product.findById(productId);
+          const product = await Product.findOne({productId:productId});
           const updatedProduct = product.toObject();
           updatedProduct.price = updatedProduct.price * req.Currency;
           return updatedProduct;
@@ -1021,5 +1032,80 @@ export const FavouriteProducts = async (req, res) => {
       res.status(200).json( products );
   } catch (error) {
       res.status(500).json({ message: error.message });
+  }
+};
+
+export const filters = async (req, res) => {
+  try {
+    const {
+      minPrice,
+      maxPrice,
+      rating,
+      brand,
+      category,
+      subcategory, // Added subcategory
+      minDiscount,
+      maxDiscount,
+      hotDeals,
+      sortBy,
+      order
+    } = req.query;
+    console.log(req.query);
+    let filter = {};
+    
+    if (minPrice) filter.price = { ...filter.price, $gte: Number(minPrice) };
+    if (maxPrice) filter.price = { ...filter.price, $lte: Number(maxPrice) };
+    if (rating) filter.rating = { $gte: Number(rating) };
+    if (brand) filter.brandname = brand;
+    if (category) filter.category = category;
+    if (subcategory) filter.subcategories = { $in: subcategory.split(',') }; 
+    // console.log("hello filter")
+    if (minDiscount) filter.discount = { ...filter.discount, $gte: Number(minDiscount) };
+    if (maxDiscount) filter.discount = { ...filter.discount, $lte: Number(maxDiscount) };
+    if (hotDeals && hotDeals !== 'false') filter.hotDeals = true;
+
+    let sort = {};
+    if (sortBy) sort[sortBy] = order === 'desc' ? -1 : 1;
+    console.log(filter);
+    const products = await Product.find(filter).sort(sort);
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+const searchProducts = async (searchTerm) => {
+  try {
+    const regex = new RegExp(searchTerm, 'i'); // 'i' makes it case-insensitive
+    const results = await Product.find({
+      $or: [
+        { name: regex },
+        { category: regex },
+        { subcategories: regex },
+        { description: regex },
+        { brandname: regex }
+      ]
+    });
+    return results;
+  } catch (error) {
+    console.error("Error searching products:", error);
+    throw error;
+  }
+};
+
+
+export const search =  async (req, res) => {
+  const { q } = req.query;
+  if (!q) {
+    return res.status(400).send('Query parameter "q" is required');
+  }
+  try {
+    const products = await searchProducts(q);
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while searching for products' });
   }
 };

@@ -75,6 +75,14 @@ const productSchema = new mongoose.Schema({
   }
 },{timestamps:true});
 
+productSchema.index({ 
+  name: 'text', 
+  category: 'text', 
+  subcategories: 'text', 
+  description: 'text', 
+  brandname: 'text' 
+});
+
 productSchema.pre('save', async function (next) {
   const product = this;
   if (!product.isNew) {

@@ -25,7 +25,7 @@ export const addToCart = async (req, res) => {
       // Product not in cart, add new item
       const product = await Product.findOne({ productId: productId }); // Use _id or unique identifier
       if (!quantity || quantity <= 0) {
-        quantity = product.quantity; // Set default quantity to 1 if not provided or invalid
+        quantity = 1; // Set default quantity to 1 if not provided or invalid
       }
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
@@ -60,7 +60,7 @@ export const increment = async (req, res) => {
       const productIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString());
       const product = await Product.findOne({productId:productId});
       if (productIndex > -1) {
-        cart.items[productIndex].quantity +=product.quantity;
+        cart.items[productIndex].quantity +=1;
         await cart.save();
         return res.status(200).json(cart);
       } else {
@@ -88,7 +88,7 @@ export const increment = async (req, res) => {
       const productIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString());
       const product = await Product.findOne({productId:productId});  
       if (productIndex > -1) {
-        cart.items[productIndex].quantity -= product.quantity;
+        cart.items[productIndex].quantity -= 1;
         if (cart.items[productIndex].quantity <= 0) {
           cart.items.splice(productIndex, 1); // Remove the product if quantity goes to zero
         }
@@ -145,7 +145,7 @@ export const increment = async (req, res) => {
       // Find the cart for the user
       const cart = await Cart.findOne({ user: req.user.email });
       if (!cart) {
-        return res.status(400).json({ error: "Empty Cart" });
+        return res.status(200).json({ error: "Empty Cart" });
       }
   
       let totalCost = 0;
@@ -160,6 +160,8 @@ export const increment = async (req, res) => {
             name: product.name,
             coverImage: product.coverImage,
             price: product.price,
+            rating:product.rating,
+            productQuantity:product.quantity,
             discountedPrice: product.discountedPrice,
             quantity: item.quantity,
             totalItemCost: product.discountedPrice * item.quantity,

@@ -36,7 +36,7 @@ router.put("/admin/prod/editcat",verifyAuthToken,checkRoleAccess,controller.edit
 // edit brand
 router.put("/admin/prod/editbrand",verifyAuthToken,checkRoleAccess,controller.editBrand);
 // getproductsby brand
-router.get("/prod/getproductsbybrand",controller.getProductsByBrand);
+router.get("/prod/getproductsbybrand/:brandname",currencyHandler,controller.getProductsByBrand);
 // getall brands
 router.get("/prod/getallbrands",controller.getAllBrands);
 // resetprioritybybrand
@@ -70,5 +70,7 @@ router.get("/admin/getSubcatbycat/:category",verifyAuthToken,checkRoleAccess,con
 router.get("/prod/getProductsByCategory/:cate",currencyHandler,controller.getProductsByCategory);
 router.post("/prod/addAndRemoveFav/:productId",verifyAuthToken,checkRoleAccess,controller.AddAndRemoveFavourites);
 router.get("/prod/getFavourites",verifyAuthToken,checkRoleAccess,currencyHandler,controller.FavouriteProducts);
+router.get("/prod/search",controller.search);
 
+router.get("/prod/filter",controller.filters);
 export default router;

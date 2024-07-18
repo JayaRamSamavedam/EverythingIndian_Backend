@@ -7,7 +7,7 @@ const favouritesSchema = new mongoose.Schema({
         unique:true,
     },
     products:{
-        type:[String],
+        type:[Number],
     }
 });
 // Add a product to the favourites
@@ -38,37 +38,42 @@ favouritesSchema.statics.addToFavourites = async function(email, productId) {
 };
 
 
-favouritesSchema.static.AddandDelete = async function(email,productId){
+favouritesSchema.statics.AddandDelete = async function(email, productId) {
+    console.log("I have been called");
     let message = "";
-    try{
-        const favourites = await this.findOne({email});
-        if(!favourites){
-            favourites = new this({ email, products: [productId] });
-            message="added product to favourites";
-        }
-        else{
-            if (favourites.products.includes(productId)) {
-                favourites.products = favourites.products.filter(p => p !== productId);
-                message="product removed from favourites";
+    try {
+        let favourites = await this.findOne({ email });
+        if (!favourites) {
+            const product = await Product.findOne({productId:productId});
+            if (product) {
+                favourites = new this({ email, products: [productId] });
+                message = "added product to favourites";
+                await favourites.save();
+            } else {
+                throw new Error("Invalid Product Id");
             }
-            else{
-                const product = Product.findOne({productId:productId});
-            if(product){
-            favourites.products.push(productId);
-            message="added product to favourites";
+        } else {
+            const productIndex = favourites.products.indexOf(productId);
+            if (productIndex > -1) {
+                favourites.products.splice(productIndex, 1);
+                message = "product removed from favourites";
+            } else {
+                const product = await Product.findOne({productId:productId});
+                if (product) {
+                    favourites.products.push(Number(productId));
+                    message = "added product to favourites";
+                } else {
+                    throw new Error("Invalid Product Id");
+                }
             }
-            else{
-                throw new Error("In valid Product Id");
-            }
-            }
-
+            await favourites.save();
         }
         return message;
-    }
-    catch(error){
+    } catch (error) {
         throw error;
     }
-}
+};
+
 
 favouritesSchema.statics.isFavourite = async function(email,productId){
     try{
