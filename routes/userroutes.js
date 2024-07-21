@@ -44,4 +44,6 @@ router.post("/user/changeusername",verifyAuthToken,controllers.changeUname);
 
 router.post("/verify",controllers.verifyToken);
 
+router.get("/user/getuser",verifyAuthToken,controllers.getUser);
+
 export default router;

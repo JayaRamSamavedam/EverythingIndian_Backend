@@ -491,3 +491,21 @@ else{
 }
   
 };
+
+export const getUser = async(req,res)=>{
+  try{
+    const user = {
+      fullName:req.user.firstname,
+      email:req.user.email,
+      phonenumber:req.user.email,
+      birthday:req.user.email,
+      region:req.user.region,
+      deliveryAddress:req.user.deliveryAddress,
+      billingAddress:req.user.billingAddress
+    }
+    return res.json(user);
+  }
+  catch(error){
+    return res.status(500).json({"error":error.message});
+  }
+};

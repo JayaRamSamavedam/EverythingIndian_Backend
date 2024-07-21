@@ -320,9 +320,12 @@ export const getProductById = async(req,res)=>{
     if(!product){
       return res.status(400).json({error:"invalid product id"});
     }
+    product.views+=1;
+    await product.save();
     if(req.user){
       const abcd = await RecentlyViewed.createOrUpdate(req.user.email,product);
     }
+    
     const updatedProduct = product.toObject();
         updatedProduct.price = updatedProduct.price * req.Currency;
     return res.status(200).json(updatedProduct);
@@ -1038,6 +1041,7 @@ export const FavouriteProducts = async (req, res) => {
 export const filters = async (req, res) => {
   try {
     const {
+      search,
       minPrice,
       maxPrice,
       rating,
@@ -1052,22 +1056,39 @@ export const filters = async (req, res) => {
     } = req.query;
     console.log(req.query);
     let filter = {};
-    
     if (minPrice) filter.price = { ...filter.price, $gte: Number(minPrice) };
     if (maxPrice) filter.price = { ...filter.price, $lte: Number(maxPrice) };
     if (rating) filter.rating = { $gte: Number(rating) };
     if (brand) filter.brandname = brand;
     if (category) filter.category = category;
     if (subcategory) filter.subcategories = { $in: subcategory.split(',') }; 
-    // console.log("hello filter")
     if (minDiscount) filter.discount = { ...filter.discount, $gte: Number(minDiscount) };
     if (maxDiscount) filter.discount = { ...filter.discount, $lte: Number(maxDiscount) };
     if (hotDeals && hotDeals !== 'false') filter.hotDeals = true;
 
     let sort = {};
+
+
     if (sortBy) sort[sortBy] = order === 'desc' ? -1 : 1;
-    console.log(filter);
-    const products = await Product.find(filter).sort(sort);
+    // console.log(filter);
+    let products;
+    if(search)
+    {
+      const regex = new RegExp(search, 'i'); // 'i' makes it case-insensitive
+       products = await Product.find({
+        $or: [
+          { name: regex },
+          { category: regex },
+          { subcategories: regex },
+          { description: regex },
+          { brandname: regex }
+        ]
+      }).find(filter).sort(sort);
+    }
+    else{
+     products = await Product.find(filter).sort(sort);
+  }
+  
 
     res.json(products);
   } catch (error) {

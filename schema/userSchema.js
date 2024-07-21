@@ -5,7 +5,60 @@ import jwt from "jsonwebtoken";
 import UserGroup from './usergroupsSchema.js';
 
 const SECRECT_KEY = process.env.JWT_SECRET;
-const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET; 
+const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET;
+
+const addressSchema = new mongoose.Schema({
+  firstname: {
+    type: String,
+    required: true,
+  },
+  lastname: {
+    type: String,
+  },
+  email: {
+    type: String,
+    required: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Not a valid email");
+      }
+    },
+  },
+  companyName: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  street: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+    validate: {
+      validator: function(value) {
+        return validator.isMobilePhone(value, 'any', { strictMode: false });
+      },
+      message: "Not a valid mobile number"
+    }
+  },
+  state: {
+    type: String,
+    required: true,
+  },
+  pin: {
+    type: String,
+    required: true,
+  },
+});
 
 const userSchema = new mongoose.Schema({
   fullName: {
@@ -39,21 +92,29 @@ const userSchema = new mongoose.Schema({
       message: "Not a valid mobile number"
     }
   },
-  birthday:{
-    type:Date,
-    required:false,
+  birthday: {
+    type: Date,
+    required: false,
   },
-  region:{
-    type:String,
-    required:false,
+  region: {
+    type: String,
+    required: false,
   },
-  gender:{
-    type:String,
-    required:false,
+  gender: {
+    type: String,
+    required: false,
   },
-  userGroup:{
-    type:String,
-    required:true,
+  userGroup: {
+    type: String,
+    required: true,
+  },
+  deliveryAddress: {
+    type: addressSchema,
+    // required: true,
+  },
+  billingAddress: {
+    type: addressSchema,
+    // required: true,
   },
   tokens: [
     {
@@ -63,15 +124,14 @@ const userSchema = new mongoose.Schema({
       }
     }
   ],
-  accessToken:[
-  {
-    token:{
-      type:String,
-      required:true,
+  accessToken: [
+    {
+      token: {
+        type: String,
+        required: true,
+      }
     }
-  }
   ]
-
 });
 
 // Hash password before saving

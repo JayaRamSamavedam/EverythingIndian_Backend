@@ -53,6 +53,14 @@ const productSchema = new mongoose.Schema({
       return this.price - (this.price * this.discount / 100);
     },
   },
+  views:{
+    type:Number,
+    default:0,
+  },
+  purchases:{
+    type:Number,
+    default:0,
+  },
   quantity:{
     type:Number,
     required:true,

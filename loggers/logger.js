@@ -1,57 +1,21 @@
-// const { createLogger, format, transports } = require('winston');
+// loggers/logger.js
+import Log from '../schema/logSchema.js';
 
-import {createLogger,format,transports} from 'winston'
-import {MongoDB} from 'winston-mongodb'
-import 'winston-daily-rotate-file'
+const log = async  (level, message, meta) => {
+  const logEntry = new Log({
+    level,
+    message,
+    meta
+  });
 
+  await logEntry.save();
+};
 
-// const mongoose = require('mongoose'); // Import the existing mongoose connection
-// const winston = require('winston/lib/winston/config');
-import mongoose from 'mongoose';
-import winston from 'winston/lib/winston/config/index.js';
-// logger.js
-// const { createLogger, transports, format } = require('winston');
-// const { MongoDB } = require('winston-mongodb');
-// const mongoose = require('mongoose');
-
-const logFormat = format.combine(
-  format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-);
-
-mongoose.connect('mongodb://localhost:27017/yourdb', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => {
-  console.log('MongoDB connected');
-})
-.catch(err => {
-  console.error('MongoDB connection error:', err);
-});
-
-const logger = createLogger({
-  format: logFormat,
-  transports: [
-    new transports.Console(),
-    new transports.DailyRotateFile({
-      filename: 'logs/application-%DATE%.log',
-      datePattern: 'YYYY-MM-DD',
-      maxFiles: '14d'
-    }),
-    new MongoDB({
-      level: 'info',
-      db: mongoose.connection.db, // Use mongoose connection
-      options: {
-        useUnifiedTopology: true
-      },
-      collection: 'log',
-      format: format.combine(
-        format.timestamp(),
-        format.json()
-      )
-    })
-  ]
-});
+const logger = {
+  info: (message, meta) => log('info', message, meta),
+  error: (message, meta) => log('error', message, meta),
+  warn: (message, meta) => log('warn', message, meta),
+  debug: (message, meta) => log('debug', message, meta)
+};
 
 export default logger;
