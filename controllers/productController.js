@@ -627,6 +627,7 @@ export const makeProductHotDeal = async (req,res)=>{
     if(!product){
       return res.json({error:"product not found"});
     }
+    return res.status(200).json(product);
     
   }
   catch(error){
@@ -641,7 +642,7 @@ export const removeHotDeal = async(req,res)=>{
     if(!product){
       return res.json({error:"product not found"});
     }
-    
+    return res.status(200).json(product);
   }
   catch(error){
     return res.status(500).json(error);
@@ -837,18 +838,25 @@ export const creatSubcategory = async (req,res)=>{
 
 // update
 export const editSubcategory = async (req,res)=>{
-  let {oldname,newname,proimage,discount,category}=req.body;
+  let {name,newname,proImage,discount,category}=req.body;
   try{
     const updates={}
-    if(proimage) updates.proimage = proimage;
+    if(proImage) updates.proImage = proImage;
     if(discount) updates.discount = discount;
     if(category) updates.category = category;
-    if(oldname && newname){
-      await Subcategory.updateSubcategoryName(oldname,newname);
-      oldname=newname;
+    if(name && newname){
+      await Subcategory.updateSubcategoryName(name,newname);
+      console.log("hello surya")
+      name=newname;
       const sub = await Subcategory.findOneAndUpdate({name:newname},updates);
+    console.log("hey dude")
     }
-    const sub = await Subcategory.findOneAndUpdate({name:newname},updates);
+    else if(name){
+    const sub = await Subcategory.findOneAndUpdate({name:name},updates);
+    }
+    else{
+      return res.status(400).json({error:"invalid details"});
+    }
     return res.status(200).json({message:"subcategory changed sucessfully"});
   }
   catch(error){
@@ -960,6 +968,23 @@ export const getBrandByName = async(req,res)=>{
   }
   catch{
     return res.json({error:"catched error"});
+  }
+}
+
+export const getSubCategory = async(req,res)=>{
+  const {name} = req.params;
+  if(!name) return res.status(400).json({error:"insufficient details"});
+  try{
+    const subcategory = await Subcategory.findOne({name:name});
+    if(!subcategory){
+      return res.status(400).json({error:"no such subcategories found"});
+    }
+    else{
+      return res.status(200).json(subcategory);
+    }
+  }
+  catch(error){
+return res.status(500).json({"error":error.message});
   }
 }
 

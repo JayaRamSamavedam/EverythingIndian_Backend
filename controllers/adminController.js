@@ -158,3 +158,15 @@ export const updateusergrp = async (req, res) => {
     return res.status(500).json({ error: 'Error updating user group', details: error.message });
   }
 };
+
+
+export const getAllUsers = async (req,res)=>{
+  try{
+    const users = await User.find();
+    if(!users) return res.status(400).json({message:"users not found"});
+    return res.status(200).json(users);
+  }
+  catch(error){
+    return res.status(500).json({"error":error.message})
+  } 
+};

@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs"
 import userotp from "../schema/userOtp.js";
 // const userotp = require("../schema/userOtp");
 import jwt from "jsonwebtoken"
+// import { error } from "winston";
 // const jwt = require("jsonwebtoken");
   
 const SECRECT_KEY = process.env.JWT_SECRET;
@@ -494,18 +495,91 @@ else{
 
 export const getUser = async(req,res)=>{
   try{
+    console.log(req.user)
     const user = {
-      fullName:req.user.firstname,
+      fullName:req.user.fullName,
       email:req.user.email,
-      phonenumber:req.user.email,
-      birthday:req.user.email,
+      phonenumber:req.user.phonenumber,
+      birthday:req.user.birthday,
       region:req.user.region,
-      deliveryAddress:req.user.deliveryAddress,
-      billingAddress:req.user.billingAddress
+      gender:req.user.gender,
+      deliveryAddress:req.user.deliveryAddress || null,
+      billingAddress:req.user.billingAddress || null 
     }
-    return res.json(user);
+    console.log(user)
+    return res.json({"user":user});
   }
   catch(error){
     return res.status(500).json({"error":error.message});
   }
 };
+
+
+export const editUserData = async(req,res)=>{
+  console.log("hi")
+  console.log(req.body);
+  try
+ { 
+  const {fullName,phonenumber,birthday} = req.body;
+ 
+  const u = await users.findOne({email:req.user.email})
+  const saveduser = await u.editUserDetails({fullName,phonenumber,birthday});
+  console.log("dj")
+  return res.status(200).json({message:"user details updated successfully"});
+}
+catch(error){
+  console.log(error);
+  return res.status(500).json({message:error.message});
+}
+}
+
+export const addDeliveryData = async(req,res)=>{
+  console.log(req.body)
+  try{
+    const u = await users.findOne({email:req.user.email})
+    const saveduser = await u.createDeliveryAddress(req.body.deliveryAddress);
+    return res.status(200).json({message:"deliveryAddress details added successfully"});
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({error:error.message});
+  }
+}
+
+export const editDeliveryAddress = async(req,res)=>{
+  try{
+    const u = await users.findOne({email:req.user.email});
+    const saveduser = await u.editDeliveryAddress(req.body.deliveryAddress);
+    return res.status(200).json({message:"deliveryAddress details updated"});
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({error:error.message})
+  }
+}
+
+
+export const addBillingData = async(req,res)=>{
+  console.log(req.body)
+  try{
+    const u = await users.findOne({email:req.user.email})
+    const saveduser = await u.createBillingAddress(req.body.billingAddress);
+    return res.status(200).json({message:"billingAddress details added successfully"});
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({error:error.message});
+  }
+}
+
+export const editBillingdata = async(req,res)=>{
+  try{
+    const u = await users.findOne({email:req.user.email});
+    const saveduser = await u.editBillingAddress(req.body.billingAddress);
+    return res.status(200).json({message:"billing details updated"});
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).json({error:error.message})
+  }
+}

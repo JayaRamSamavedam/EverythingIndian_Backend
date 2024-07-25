@@ -8,12 +8,9 @@ const SECRECT_KEY = process.env.JWT_SECRET;
 const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_SECRET;
 
 const addressSchema = new mongoose.Schema({
-  firstname: {
+  fullName: {
     type: String,
     required: true,
-  },
-  lastname: {
-    type: String,
   },
   email: {
     type: String,
@@ -40,7 +37,7 @@ const addressSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  phone: {
+  phonenumber: {
     type: String,
     required: true,
     validate: {
@@ -159,6 +156,59 @@ userSchema.methods.generateAuthToken = async function() {
   }
 };
 
+
+userSchema.methods.editUserDetails = async function(updates) {
+  const allowedUpdates = ["fullName", "phonenumber", "birthday", "region", "gender"];
+  const keys = Object.keys(updates);
+  const isValidOperation = keys.every((key) => allowedUpdates.includes(key));
+
+  if (!isValidOperation) {
+    throw new Error("Invalid updates!");
+  }
+
+  for (let key of keys) {
+    this[key] = updates[key];
+  }
+
+  await this.save();
+  return this;
+};
+
+// Edit delivery address
+userSchema.methods.editDeliveryAddress = async function(addressUpdates) {
+  if (!this.deliveryAddress) {
+    this.deliveryAddress = addressUpdates;
+  } else {
+    Object.assign(this.deliveryAddress, addressUpdates);
+  }
+  await this.save();
+  return this.deliveryAddress;
+};
+
+// Edit billing address
+userSchema.methods.editBillingAddress = async function(addressUpdates) {
+  if (!this.billingAddress) {
+    this.billingAddress = addressUpdates;
+  } else {
+    Object.assign(this.billingAddress, addressUpdates);
+  }
+  await this.save();
+  return this.billingAddress;
+};
+
+// Create delivery address
+userSchema.methods.createDeliveryAddress = async function(address) {
+  this.deliveryAddress = address;
+  await this.save();
+  return this.deliveryAddress;
+};
+
+// Create billing address
+userSchema.methods.createBillingAddress = async function(address) {
+  this.billingAddress = address;
+  await this.save();
+  return this.billingAddress;
+};
 
 const Users = mongoose.model("Users", userSchema);
 

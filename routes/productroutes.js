@@ -72,6 +72,6 @@ router.get("/prod/getProductsByCategory/:cate",currencyHandler,controller.getPro
 router.post("/prod/addAndRemoveFav/:productId",verifyAuthToken,checkRoleAccess,controller.AddAndRemoveFavourites);
 router.get("/prod/getFavourites",verifyAuthToken,checkRoleAccess,currencyHandler,controller.FavouriteProducts);
 router.get("/prod/search",controller.search);
-
+router.get("/admin/getsubcat/:name",controller.getSubCategory);
 router.get("/prod/filter",controller.filters);
 export default router;

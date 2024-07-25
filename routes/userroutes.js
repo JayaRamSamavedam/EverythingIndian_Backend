@@ -46,4 +46,13 @@ router.post("/verify",controllers.verifyToken);
 
 router.get("/user/getuser",verifyAuthToken,controllers.getUser);
 
+
+router.post("/user/edituser",verifyAuthToken,controllers.editUserData);
+
+
+router.post("/user/createdelivery",verifyAuthToken,controllers.addDeliveryData);
+router.post("/user/editdeliveryAdress",verifyAuthToken,controllers.editDeliveryAddress);
+router.post("/user/createbilling",verifyAuthToken,controllers.addBillingData);
+router.post("/user/editbillingAdress",verifyAuthToken,controllers.editBillingdata);
+
 export default router;
